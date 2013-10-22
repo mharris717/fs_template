@@ -85,4 +85,24 @@ describe "combine - top file in new dir" do
   end
 end
 
+#############
 
+if false
+describe "combine - append" do
+  include_context "setup"
+  let(:file_class) { FsTemplate::ThorFile }
+
+  base_file "a.txt","stuff"
+  base_file "b.txt","here"
+  on_top_file "b.txt","<thor>append_to_file FILE, BODY</thor>\nother"
+
+  it 'combined size' do
+    combined.size.should == 2
+  end
+
+  it 'combined file should overwrite' do
+    f = combined.files.find { |x| x.path == "b.txt" }
+    f.body.should == "here\nother"
+  end
+end
+end

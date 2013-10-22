@@ -9,8 +9,10 @@ shared_context "setup" do
     end
   end
 
+  let(:file_class) { FsTemplate::TemplateFile }
+
   let(:base) do
-    res = FsTemplate::Files.new
+    res = FsTemplate::Files.new(:file_class => file_class)
     self.class.files.select { |x| x[:loc] == :base }.each do |f|
       res.add f
     end
@@ -18,7 +20,7 @@ shared_context "setup" do
   end
 
   let(:on_top) do
-    res = FsTemplate::Files.new
+    res = FsTemplate::Files.new(:file_class => file_class)
     self.class.files.select { |x| x[:loc] == :on_top }.each do |f|
       res.add f
     end
