@@ -1,0 +1,3 @@
+FSTMODE:insert:line:2
+I don't belong here
+Neither do I

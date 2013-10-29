@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+load File.dirname(__FILE__) + "/../lib/fs_template.rb"
+
+FsTemplate.write_project ARGV[0],ARGV[1]

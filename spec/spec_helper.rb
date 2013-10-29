@@ -3,6 +3,10 @@ require 'spork'
 
 
 Spork.prefork do
+  unless ENV['DRB']
+    require 'simplecov'
+    SimpleCov.start
+  end
   $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
   $LOAD_PATH.unshift(File.dirname(__FILE__))
 
@@ -20,6 +24,10 @@ Spork.prefork do
 end
 
 Spork.each_run do
+  if ENV['DRB']
+    require 'simplecov'
+    SimpleCov.start
+  end
   load File.dirname(__FILE__) + "/../lib/fs_template.rb"
   #Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| load f}
 end

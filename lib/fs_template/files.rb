@@ -52,10 +52,10 @@ module FsTemplate
 
       def load_repo(url)
         dir = "/tmp/#{rand(1000000000000000000)}"
-        ec "git clone #{url} #{dir}"
+        ec "git clone #{url} #{dir} 2>&1", :silent => true
         load dir
       ensure
-        ec "rm -rf #{dir}"
+        ec "rm -rf #{dir}", :silent => true
       end
     end
   end

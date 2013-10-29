@@ -27,3 +27,5 @@ gem 'mharris_ext'
 #gem 'rchoice', :git => "git@github.com:mharris717/rchoice.git", :branch => "gemdir"
 
 gem 'andand'
+
+gem 'simplecov', :require => false, :group => :test
