@@ -57,6 +57,23 @@ describe "combine - append" do
   end
 end
 
+describe "combine - append format2" do
+  include_context "setup"
+
+  base_file "a.txt","stuff"
+  base_file "b.txt","here"
+  on_top_file "b.txt","<overlay>append</overlay>\nother"
+
+  it 'combined size' do
+    combined.size.should == 2
+  end
+
+  it 'combined file should overwrite' do
+    f = combined.files.find { |x| x.path == "b.txt" }
+    f.body.should == "here\nother"
+  end
+end
+
 describe "combine - insert" do
   include_context "setup"
 
@@ -71,6 +88,23 @@ describe "combine - insert" do
   it 'combined file should overwrite' do
     f = combined.files.find { |x| x.path == "b.txt" }
     f.body.should == "a\nother\nb\nc\nd"
+  end
+end
+
+describe "combine - insert after" do
+  include_context "setup"
+
+  base_file "a.txt","stuff"
+  base_file "b.txt","123\n456\n789"
+  on_top_file "b.txt","<overlay>action: insert\nafter: 456</overlay>\nabc"
+
+  it 'combined size' do
+    combined.size.should == 2
+  end
+
+  it 'combined file should overwrite' do
+    f = combined.files.find { |x| x.path == "b.txt" }
+    f.body.should == "123\n456\nabc\n789"
   end
 end
 

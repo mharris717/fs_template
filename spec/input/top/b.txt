@@ -1,3 +1,6 @@
-FSTMODE:insert:line:2
+<overlay>
+  action: insert
+  after: a
+</overlay>
 1
 2

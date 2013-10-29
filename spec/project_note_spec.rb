@@ -59,7 +59,7 @@ describe "write project" do
     end
 
     it 'b.txt insert' do
-      File.read("#{output_dir}/b.txt").should == %w(a 1 2 b c d).join("\n")
+      File.read("#{output_dir}/b.txt").should == %w(a 1 2 b c d).join("\n") + "\n"
     end
   end
 
