@@ -40,6 +40,23 @@ describe "combine" do
   end
 end
 
+describe "dotfile" do
+  include_context "setup"
+
+  base_file ".abc","stuff"
+  base_file "b.txt","here"
+  on_top_file "c.txt","other"
+
+  it 'combined size' do
+    combined.size.should == 3
+  end
+
+  it 'dotfile there' do
+    f = combined.files.find { |x| x.path == ".abc" }
+    f.body.should == 'stuff'
+  end
+end
+
 describe "combine - append" do
   include_context "setup"
 

@@ -33,14 +33,31 @@ module FsTemplate
     end
 
     class << self
-      def load(dir)
+      def dir_files(dir)
+        res = Dir["#{dir}/**/*"] + Dir["#{dir}/**/.*"]
+        res - [".","..",".git"]
+      end
+      def load_dir(dir)
+        raise "Bad dir" unless dir.present?
+        raise "Dir not there" unless FileTest.exist?(dir)
         res = new
-        Dir["#{dir}/**/*.*"].each do |full_file|
-          f = full_file.gsub("#{dir}/","")
-          raise "bad #{f}" if f == full_file
-          res.add :file => f, :body => File.read(full_file)
+        dir_files(dir).each do |full_file|
+          if FileTest.file?(full_file)
+            f = full_file.gsub("#{dir}/","")
+            raise "bad #{f}" if f == full_file
+            res.add :file => f, :body => File.read(full_file)
+          end
         end
         res
+      end
+
+      def load(descriptor)
+        raise "bad #{descriptor}" if descriptor.blank?
+        if descriptor =~ /\.git/
+          load_repo(descriptor)
+        else
+          load_dir(descriptor)
+        end
       end
 
       def write_combined(base_dir, top_dir, output_dir)

@@ -3,30 +3,41 @@ module FsTemplate
     include FromHash
     attr_accessor :path
 
-    fattr(:config) do
-      res = ProjectConfig.new
+    def config_body
       if FileTest.exist?("#{path}/.fstemplate")
-        res.body = File.read("#{path}/.fstemplate")
-        res.load!
+        File.read("#{path}/.fstemplate")
       elsif FileTest.exist?("#{path}/.overlay")
-        res.body = File.read("#{path}/.overlay")
-        res.load!
+        File.read("#{path}/.overlay")
       else
         raise "no config"
       end
+    end
+
+    fattr(:config) do
+      res = ProjectConfig.new
+      res.body = config_body
+      res.load!
       res
     end
 
-    fattr(:overlay_files) do
-      Files.load(path)
+    def overlay_paths
+      config.overlays + [path]
+    end
+
+    fattr(:overlays) do
+      overlay_paths.map { |x| Files.load(x) }
     end
 
     fattr(:base_files) do
-      Files.load_repo(config.base)
+      Files.load(config.base)
     end
 
     fattr(:combined_files) do
-      base_files.apply(overlay_files)
+      res = base_files
+      overlays.each do |overlay|
+        res = res.apply(overlay)
+      end
+      res
     end
 
     def write_to!(output_path)
@@ -41,6 +52,7 @@ module FsTemplate
   class ProjectConfig
     include FromHash
     attr_accessor :body, :base
+    fattr(:overlays) { [] }
 
     def base(*args)
       if args.empty?
@@ -48,6 +60,10 @@ module FsTemplate
       else
         @base = args.first
       end
+    end
+
+    def overlay(name)
+      self.overlays << name
     end
 
     def load!

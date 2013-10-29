@@ -1,27 +1,64 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "ProjectConfig" do
-  let(:config_body) do
-    "c.base :foo"
-  end
-
   let(:config) do
     res = FsTemplate::ProjectConfig.new
     res.body = config_body
     res
   end
 
-  it 'smoke' do
-    config.should be
+  describe "one base" do
+    let(:config_body) do
+      "c.base :foo"
+    end
+
+    it 'smoke' do
+      config.should be
+    end
+
+    it 'eval' do
+      config.load!
+      config.base.should == :foo
+    end
   end
 
-  it 'eval' do
-    config.load!
-    config.base.should == :foo
+  describe "base and overlay" do
+    let(:config_body) do
+      "c.base :foo
+      c.overlay :bar"
+    end
+
+    it 'eval' do
+      config.load!
+      config.base.should == :foo
+      config.overlays.should == [:bar]
+    end
   end
 
   it 'project no config' do
     lambda { FsTemplate::Project.new.config }.should raise_error
+  end
+end
+
+describe 'Project' do
+  let(:config_body) do
+    "c.base :foo
+    c.overlay :bar"
+  end
+
+  let(:project) do
+    res = FsTemplate::Project.new(:path => "/fun")
+    res.stub(:config_body) { config_body }
+    res
+  end
+
+  before do
+    FsTemplate::Files.stub(:load) { FsTemplate::Files.new }
+  end
+
+  it 'overlays' do
+    project.overlays.size.should == 2
+    project.overlay_paths.last.should == "/fun"
   end
 end
 
@@ -70,6 +107,10 @@ describe "write project" do
 
     it 'has README' do
       files_equal repo_dir, output_dir, "README.md"
+    end
+
+    it 'has .abc' do
+      files_equal repo_dir, output_dir, ".abc"
     end
 
   end

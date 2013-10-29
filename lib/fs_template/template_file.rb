@@ -35,7 +35,11 @@ module FsTemplate
         if note == 'append'
           base_body + body
         elsif params[:action] == 'insert' && params[:after]
-          base_body.gsub(params[:after],"#{params[:after]}#{body}")
+          base_body.gsub(params[:after],"#{params[:after]}#{body}").tap do |subbed|
+            if subbed == base_body
+              raise "no change, couldn't find #{params[:after]} in \n#{base_body}"
+            end
+          end
         else
           raise "bad"
         end
