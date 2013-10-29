@@ -8,6 +8,9 @@ module FsTemplate
       if FileTest.exist?("#{path}/.fstemplate")
         res.body = File.read("#{path}/.fstemplate")
         res.load!
+      elsif FileTest.exist?("#{path}/.overlay")
+        res.body = File.read("#{path}/.overlay")
+        res.load!
       else
         raise "no config"
       end
