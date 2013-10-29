@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "bin/fs_template",
+    "fs_template.gemspec",
     "lib/fs_template.rb",
     "lib/fs_template/files.rb",
     "lib/fs_template/project.rb",
