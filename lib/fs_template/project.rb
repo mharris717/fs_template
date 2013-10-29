@@ -43,7 +43,9 @@ module FsTemplate
     def write_to!(output_path)
       base_files.write_to! output_path
       `rm -rf #{output_path}/.git`
-      ec "cd #{output_path} && git init && git add . && git commit -m 'Base Files #{config.base}'", :silent => true
+
+      full_init = 'git init && git config user.email johnsmith@fake.com && git config user.name "John Smith"'
+      ec "cd #{output_path} && #{full_init} && git add . && git commit -m 'Base Files #{config.base}'", :silent => true
       combined_files.write_to!(output_path)
       ec "cd #{output_path} && git add . && git commit -m 'Overlay Files #{path}'", :silent => true
     end
