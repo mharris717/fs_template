@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "fs_template"
-  s.version = "0.1.1"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
-  s.date = "2013-10-29"
+  s.date = "2013-11-01"
   s.description = "fs_template"
   s.email = "mharris717@gmail.com"
   s.executables = ["fs_template"]
