@@ -40,6 +40,12 @@ module FsTemplate
               raise "no change, couldn't find #{params[:after]} in \n#{base_body}"
             end
           end
+        elsif params[:action] == 'replace' && params[:base]
+          base_body.gsub(params[:base],body).tap do |subbed|
+            if subbed == base_body
+              raise "no change, couldn't find #{params[:base]} in \n#{base_body}"
+            end
+          end
         else
           raise "bad"
         end
