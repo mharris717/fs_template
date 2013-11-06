@@ -1,6 +1,7 @@
 module FsTemplate
   class Files
     include FromHash
+    include Enumerable
     fattr(:files) { [] }
     fattr(:file_class) { TemplateFile }
     def add(ops)
@@ -37,10 +38,11 @@ module FsTemplate
         res = Dir["#{dir}/**/*"] + Dir["#{dir}/**/.*"]
         res - [".","..",".git"]
       end
-      def load_dir(dir)
+      def load_dir(dir,ops={})
         raise "Bad dir" unless dir.present?
-        raise "Dir not there" unless FileTest.exist?(dir)
+        raise "Dir not there #{dir}" unless FileTest.exist?(dir)
         res = new
+        res.file_class = ops[:file_class] if ops[:file_class]
         dir_files(dir).each do |full_file|
           if FileTest.file?(full_file)
             f = full_file.gsub("#{dir}/","")
@@ -51,12 +53,18 @@ module FsTemplate
         res
       end
 
-      def load(descriptor)
+      def load_command(cmd,ops)
+        FromCommand.new(:command => cmd, :path => ops[:path]||".").files
+      end
+
+      def load(descriptor, ops={})
         raise "bad #{descriptor}" if descriptor.blank?
-        if descriptor =~ /\.git/
+        if ops[:type] == :command
+          load_command(descriptor,ops)
+        elsif descriptor =~ /\.git/
           load_repo(descriptor)
         else
-          load_dir(descriptor)
+          load_dir(descriptor,ops)
         end
       end
 

@@ -62,6 +62,89 @@ describe 'Project' do
   end
 end
 
+describe 'Project with command' do
+  let(:config_body) do
+    "c.base :foo
+    c.overlay :bar
+    c.command 'ls'"
+  end
+
+  let(:project) do
+    res = FsTemplate::Project.new(:path => "/fun")
+    res.stub(:config_body) { config_body }
+    res
+  end
+
+  before do
+    FsTemplate::Files.stub(:load) { FsTemplate::Files.new }
+  end
+
+  it 'commands' do
+    project.commands(:after).should == ["ls"]
+  end
+end
+
+describe 'Project order' do
+  let(:config_body) do
+    "c.base :foo
+    c.overlay :bar
+    c.command 'ls'"
+  end
+
+  let(:project) do
+    res = FsTemplate::Project.new(:path => "/tmp/a/b/c/fun")
+    res.stub(:config_body) { config_body }
+    res
+  end
+
+  before do
+    FsTemplate::Files.stub(:load) { FsTemplate::Files.new }
+  end
+
+  it 'write' do
+    output_path = "/tmp/f/t/r/r"
+
+    FsTemplate.should_receive(:ec).with("cd #{output_path} && ls", :silent => true)
+    project.stub(:git_commit)
+    project.combined_files.stub("write_to!")
+
+    project.write_to! output_path
+  end
+end
+
+describe 'Project with no base' do
+  let(:config_body) do
+    "c.base 'mkdir foo && echo stuff > foo/abc.txt', :type => :command, :path => :foo"
+  end
+
+  let(:output_path) do
+    res = "/tmp/#{rand(1000000000000000)}"
+    `mkdir #{res}`
+    res
+  end
+
+  after do
+    `rm -rf #{output_path}`
+  end
+
+  let(:project) do
+    res = FsTemplate::Project.new(:path => "/tmp/a/b/c/fun")
+    res.stub(:config_body) { config_body }
+    res
+  end
+
+  it 'write' do
+    #FsTemplate.should_receive(:ec).with("echo stuff > abc.txt", :silent => true)
+    project.stub(:git_commit)
+    project.stub(:overlay_paths) { [] }
+
+    project.write_to! output_path
+
+    File.read("#{output_path}/abc.txt").strip.should == 'stuff'
+  end
+end
+
+
 describe "write project" do
   include_context "output dir"
 

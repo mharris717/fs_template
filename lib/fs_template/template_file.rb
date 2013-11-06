@@ -117,4 +117,10 @@ module FsTemplate
       File.create "#{dir}/#{path}",body
     end
   end
+
+  class BasicFile < TemplateFile
+    def body
+      full_body
+    end
+  end
 end

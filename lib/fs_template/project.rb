@@ -24,12 +24,20 @@ module FsTemplate
       config.overlays + [path]
     end
 
+    def commands(phase)
+      config.commands.select { |x| x[:phase] == phase }.map { |x| x[:command] }
+    end
+
     fattr(:overlays) do
       overlay_paths.map { |x| Files.load(x) }
     end
 
     fattr(:base_files) do
-      Files.load(config.base)
+      if config.base
+        Files.load(config.base,config.base_ops)
+      else
+        nil
+      end
     end
 
     fattr(:combined_files) do
@@ -40,32 +48,55 @@ module FsTemplate
       res
     end
 
-    def write_to!(output_path)
-      base_files.write_to! output_path
-      `rm -rf #{output_path}/.git`
+    def git_commit(output_path,message,init=false)
+      if init
+        `rm -rf #{output_path}/.git`
+        ec "cd #{output_path} && git init && git config user.email johnsmith@fake.com && git config user.name 'John Smith'", :silent => true
+      end
+      ec "cd #{output_path} && git add . && git commit -m '#{message}'", :silent => true
+    end
 
-      full_init = 'git init && git config user.email johnsmith@fake.com && git config user.name "John Smith"'
-      ec "cd #{output_path} && #{full_init} && git add . && git commit -m 'Base Files #{config.base}'", :silent => true
+
+    def write_to!(output_path)
+      commands(:before).each do |cmd|
+        FsTemplate.ec "cd #{output_path} && #{cmd}", :silent => true
+        git_commit output_path, "Ran Command: #{cmd}"
+      end
+
+      base_files.write_to! output_path
+
+      git_commit output_path, "Base Files #{config.base}", true
       combined_files.write_to!(output_path)
-      ec "cd #{output_path} && git add . && git commit -m 'Overlay Files #{path}'", :silent => true
+      git_commit output_path, "Overlay Files #{path}"
+
+      commands(:after).each do |cmd|
+        FsTemplate.ec "cd #{output_path} && #{cmd}", :silent => true
+        git_commit output_path, "Ran Command: #{cmd}"
+      end
     end
   end
 
   class ProjectConfig
     include FromHash
-    attr_accessor :body, :base
+    attr_accessor :body, :base, :base_ops
     fattr(:overlays) { [] }
+    fattr(:commands) { [] }
 
     def base(*args)
       if args.empty?
         @base
       else
         @base = args.first
+        @base_ops = args[1] || {}
       end
     end
 
     def overlay(name)
       self.overlays << name
+    end
+
+    def command(cmd,phase=:after)
+      self.commands << {:command => cmd, :phase => phase}
     end
 
     def load!
