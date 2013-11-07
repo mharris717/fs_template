@@ -20,6 +20,11 @@ Spork.prefork do
   RSpec.configure do |config|
     #config.filter_run :focus => true
     config.fail_fast = false
+
+    config.before(:all) do
+      repo = File.dirname(__FILE__) + "/input/repo"
+      `cp -r #{repo}/git_dir #{repo}/.git` unless FileTest.exist?("#{repo}/.git")
+    end
   end
 end
 
