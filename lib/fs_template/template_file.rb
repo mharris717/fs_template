@@ -22,7 +22,7 @@ module FsTemplate
         else
           lines.each do |line|
             parts = line.split(":").map { |x| x.strip }.select { |x| x.present? }
-            raise "bad" unless parts.size == 2
+            raise "bad #{path} #{parts.inspect}" unless parts.size == 2
             res[parts[0].to_sym] = parts[1]
           end
         end
@@ -38,6 +38,12 @@ module FsTemplate
           base_body.gsub(params[:after],"#{params[:after]}#{body}").tap do |subbed|
             if subbed == base_body
               raise "no change, couldn't find #{params[:after]} in \n#{base_body}"
+            end
+          end
+        elsif params[:action] == 'insert' && params[:before]
+          base_body.gsub(params[:before],"#{body}#{params[:before]}").tap do |subbed|
+            if subbed == base_body
+              raise "no change, couldn't find #{params[:before]} in \n#{base_body}"
             end
           end
         elsif params[:action] == 'replace' && params[:base]

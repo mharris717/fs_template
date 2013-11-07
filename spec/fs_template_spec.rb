@@ -125,6 +125,23 @@ describe "combine - insert after" do
   end
 end
 
+describe "combine - insert before" do
+  include_context "setup"
+
+  base_file "a.txt","stuff"
+  base_file "b.txt","123\n456\n789"
+  on_top_file "b.txt","<overlay>action: insert\nbefore: 456</overlay>abc\n"
+
+  it 'combined size' do
+    combined.size.should == 2
+  end
+
+  it 'combined file should overwrite' do
+    f = combined.files.find { |x| x.path == "b.txt" }
+    f.body.should == "123\nabc\n456\n789"
+  end
+end
+
 describe "combine - replace" do
   include_context "setup"
 
