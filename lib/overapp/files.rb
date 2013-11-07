@@ -79,6 +79,7 @@ module Overapp
       end
 
       def load_repo(url)
+        url = url.gsub "ROOT_DIR", File.expand_path(File.dirname(__FILE__) + "/../..")
         dir = "/tmp/#{rand(1000000000000000000)}"
         ec "git clone #{url} #{dir} 2>&1", :silent => true
         load dir

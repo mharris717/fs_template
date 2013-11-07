@@ -1,1 +1,1 @@
-c.base "file:///code/orig/fs_template/spec/input/repo/.git"
+c.base "ROOT_DIR/spec/input/repo/.git"
