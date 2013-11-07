@@ -1,1 +1,1 @@
-c.base "ROOT_DIR/spec/input/repo/.git"
+c.base "file://ROOT_DIR/spec/input/repo/.git"
