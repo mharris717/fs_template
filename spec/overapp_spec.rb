@@ -93,6 +93,23 @@ describe "combine - insert after" do
   end
 end
 
+describe "combine - insert after with colon" do
+  include_context "setup"
+
+  base_file "a.txt","stuff"
+  base_file "b.txt","123\n45: 6\n789"
+  on_top_file "b.txt","<overapp>action: insert\nafter: 45: 6</overapp>\nabc"
+
+  it 'combined size' do
+    combined.size.should == 2
+  end
+
+  it 'combined file should overwrite' do
+    f = combined.files.find { |x| x.path == "b.txt" }
+    f.body.should == "123\n45: 6\nabc\n789"
+  end
+end
+
 describe "combine - insert before" do
   include_context "setup"
 
@@ -168,4 +185,13 @@ describe "combine - top file in new dir" do
   end
 end
 
+describe "combine - insert to nothing" do
+  include_context "setup"
+
+  on_top_file "b.txt","<overapp>action: insert\nafter: 456</overapp>abc"
+
+  it 'errors' do
+    lambda { combined.size }.should raise_error
+  end
+end
 

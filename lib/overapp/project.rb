@@ -97,6 +97,10 @@ module Overapp
       self.overapps << name
     end
 
+    def overlay(name)
+      overapp(name)
+    end
+
     def command(cmd,phase=:after)
       self.commands << {:command => cmd, :phase => phase}
     end

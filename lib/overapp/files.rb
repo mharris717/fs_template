@@ -18,6 +18,8 @@ module Overapp
           res -= [existing]
           new_file = top_file.combined(existing)
           res << new_file if new_file
+        elsif top_file.has_note?
+          raise "cannot overlay onto missing file #{top_file.path}"
         else
           res << top_file
         end

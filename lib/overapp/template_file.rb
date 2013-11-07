@@ -37,7 +37,11 @@ module Overapp
           res[:action] = lines.first.strip
         else
           lines.each do |line|
-            parts = line.split(":").map { |x| x.strip }.select { |x| x.present? }
+            parts = line.split(":").select { |x| x.present? }
+            if parts.size > 2
+              parts = [parts[0],parts[1..-1].join(":")]
+            end
+            parts = parts.map { |x| x.strip }
             raise "bad #{path} #{parts.inspect}" unless parts.size == 2
             res[parts[0].to_sym] = parts[1]
           end
@@ -65,7 +69,7 @@ module Overapp
         elsif params[:action] == 'insert' && params[:after]
           base_body.gsub(params[:after],"#{params[:after]}#{body}").tap do |subbed|
             if subbed == base_body
-              raise "no change, couldn't find #{params[:after]} in \n#{base_body}"
+              raise "no change, couldn't find #{params[:after]} to insert #{body} in \n#{base_body}"
             end
           end
         elsif params[:action] == 'insert' && params[:before]
@@ -77,7 +81,7 @@ module Overapp
         elsif params[:action] == 'replace' && params[:base]
           base_body.gsub(params[:base],body).tap do |subbed|
             if subbed == base_body
-              raise "no change, couldn't find #{params[:base]} in \n#{base_body}"
+              raise "no change, couldn't find #{params[:base]} to replace with #{body} in \n#{base_body}"
             end
           end
         elsif params[:action] == 'delete'
@@ -90,6 +94,9 @@ module Overapp
     end
 
     fattr(:split_parts) { split_note_and_body }   
+    def has_note?
+      split_parts.any? { |x| x[:note].present? }
+    end
 
     def body
       full_body

@@ -2,4 +2,4 @@
 
 load File.dirname(__FILE__) + "/../lib/overapp.rb"
 
-FsTemplate.write_project ARGV[0],ARGV[1]
+Overapp.write_project ARGV[0],ARGV[1]
