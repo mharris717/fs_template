@@ -6,7 +6,7 @@ describe 'FromCommand' do
   end
 
   let(:from_command) do
-    FsTemplate::FromCommand.new(:command => command, :path => "abc")
+    Overlay::FromCommand.new(:command => command, :path => "abc")
   end
 
   it 'files' do

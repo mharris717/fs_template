@@ -4,15 +4,15 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "fs_template"
+  s.name = "overlay"
   s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
   s.date = "2013-11-07"
-  s.description = "fs_template"
+  s.description = "overlay"
   s.email = "mharris717@gmail.com"
-  s.executables = ["fs_template"]
+  s.executables = ["overlay"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -27,20 +27,20 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "bin/fs_template",
-    "fs_template.gemspec",
-    "lib/fs_template.rb",
-    "lib/fs_template/files.rb",
-    "lib/fs_template/from_command.rb",
-    "lib/fs_template/project.rb",
-    "lib/fs_template/template_file.rb",
-    "lib/fs_template/thor_file.rb",
+    "bin/overlay",
+    "lib/overlay.rb",
+    "lib/overlay/files.rb",
+    "lib/overlay/from_command.rb",
+    "lib/overlay/project.rb",
+    "lib/overlay/template_file.rb",
+    "lib/overlay/thor_file.rb",
+    "overlay.gemspec",
     "spec/from_command_spec.rb",
-    "spec/fs_template_spec.rb",
     "spec/input/top/.overlay",
     "spec/input/top/b.txt",
     "spec/input/top/c.txt",
     "spec/input/top/place/d.txt",
+    "spec/overlay_spec.rb",
     "spec/project_note_spec.rb",
     "spec/spec_helper.rb",
     "spec/support/output_dir.rb",
@@ -53,11 +53,11 @@ Gem::Specification.new do |s|
     "vol/input/top/place/d.txt",
     "vol/test_write.rb"
   ]
-  s.homepage = "http://github.com/mharris717/fs_template"
+  s.homepage = "http://github.com/mharris717/overlay"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = "2.0.7"
-  s.summary = "fs_template"
+  s.summary = "overlay"
 
   if s.respond_to? :specification_version then
     s.specification_version = 4

@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "ProjectConfig" do
   let(:config) do
-    res = FsTemplate::ProjectConfig.new
+    res = Overlay::ProjectConfig.new
     res.body = config_body
     res
   end
@@ -36,7 +36,7 @@ describe "ProjectConfig" do
   end
 
   it 'project no config' do
-    lambda { FsTemplate::Project.new.config }.should raise_error
+    lambda { Overlay::Project.new.config }.should raise_error
   end
 end
 
@@ -47,13 +47,13 @@ describe 'Project' do
   end
 
   let(:project) do
-    res = FsTemplate::Project.new(:path => "/fun")
+    res = Overlay::Project.new(:path => "/fun")
     res.stub(:config_body) { config_body }
     res
   end
 
   before do
-    FsTemplate::Files.stub(:load) { FsTemplate::Files.new }
+    Overlay::Files.stub(:load) { Overlay::Files.new }
   end
 
   it 'overlays' do
@@ -70,13 +70,13 @@ describe 'Project with command' do
   end
 
   let(:project) do
-    res = FsTemplate::Project.new(:path => "/fun")
+    res = Overlay::Project.new(:path => "/fun")
     res.stub(:config_body) { config_body }
     res
   end
 
   before do
-    FsTemplate::Files.stub(:load) { FsTemplate::Files.new }
+    Overlay::Files.stub(:load) { Overlay::Files.new }
   end
 
   it 'commands' do
@@ -92,19 +92,19 @@ describe 'Project order' do
   end
 
   let(:project) do
-    res = FsTemplate::Project.new(:path => "/tmp/a/b/c/fun")
+    res = Overlay::Project.new(:path => "/tmp/a/b/c/fun")
     res.stub(:config_body) { config_body }
     res
   end
 
   before do
-    FsTemplate::Files.stub(:load) { FsTemplate::Files.new }
+    Overlay::Files.stub(:load) { Overlay::Files.new }
   end
 
   it 'write' do
     output_path = "/tmp/f/t/r/r"
 
-    FsTemplate.should_receive(:ec).with("cd #{output_path} && ls", :silent => true)
+    Overlay.should_receive(:ec).with("cd #{output_path} && ls", :silent => true)
     project.stub(:git_commit)
     project.combined_files.stub("write_to!")
 
@@ -128,13 +128,13 @@ describe 'Project with no base' do
   end
 
   let(:project) do
-    res = FsTemplate::Project.new(:path => "/tmp/a/b/c/fun")
+    res = Overlay::Project.new(:path => "/tmp/a/b/c/fun")
     res.stub(:config_body) { config_body }
     res
   end
 
   it 'write' do
-    #FsTemplate.should_receive(:ec).with("echo stuff > abc.txt", :silent => true)
+    #Overlay.should_receive(:ec).with("echo stuff > abc.txt", :silent => true)
     project.stub(:git_commit)
     project.stub(:overlay_paths) { [] }
 
@@ -167,7 +167,7 @@ describe "write project" do
 
   describe "from git" do
     before do
-      FsTemplate.write_project overlay_dir, output_dir
+      Overlay.write_project overlay_dir, output_dir
     end
 
     it 'has README' do
@@ -185,7 +185,7 @@ describe "write project" do
 
   describe "from combined" do
     before do
-      FsTemplate::Files.write_combined repo_dir,overlay_dir,output_dir
+      Overlay::Files.write_combined repo_dir,overlay_dir,output_dir
     end
 
     it 'has README' do

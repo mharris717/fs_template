@@ -1,4 +1,4 @@
-module FsTemplate
+module Overlay
   class Files
     include FromHash
     include Enumerable

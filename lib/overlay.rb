@@ -1,10 +1,10 @@
 require 'mharris_ext'
 
 %w(files template_file thor_file project from_command).each do |f|
-  load File.dirname(__FILE__) + "/fs_template/#{f}.rb"
+  load File.dirname(__FILE__) + "/overlay/#{f}.rb"
 end
 
-module FsTemplate
+module Overlay
   class << self
     def with_repo_path(url)
       dir = "/tmp/#{rand(100000000000000000000)}"
@@ -27,7 +27,7 @@ module FsTemplate
     end
     def write_project(overlay_path,output_path)
       with_local_path(overlay_path) do |dir|
-        FsTemplate::Project.new(:path => dir).write_to!(output_path)
+        Overlay::Project.new(:path => dir).write_to!(output_path)
       end
     end
 

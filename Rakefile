@@ -14,11 +14,11 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "fs_template"
-  gem.homepage = "http://github.com/mharris717/fs_template"
+  gem.name = "overlay"
+  gem.homepage = "http://github.com/mharris717/overlay"
   gem.license = "MIT"
-  gem.summary = %Q{fs_template}
-  gem.description = %Q{fs_template}
+  gem.summary = %Q{overlay}
+  gem.description = %Q{overlay}
   gem.email = "mharris717@gmail.com"
   gem.authors = ["Mike Harris"]
   # dependencies defined in Gemfile
@@ -43,7 +43,32 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "fs_template #{version}"
+  rdoc.title = "overlay #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+task :rename_to_overlay do
+  require 'mharris_ext'
+  names = {}
+  names["FsTemplate"] = "Overlay"
+  names["fs_template"] = "overlay"
+
+  (Dir["**/*.rb"] + Dir["**/*.gemspec"]).each do |f|
+    body = File.read(f)
+    names.each do |k,v|
+      body = body.gsub(k,v)
+    end
+    File.create f, body
+  end
+
+  Dir["**/*"].select { |x| FileTest.file?(x) }.each do |file|
+    base = File.basename(file)
+    if base =~ /fs_template/
+      dest = File.dirname(file) + "/" + base.gsub("fs_template","overlay")
+      ec "mv #{file} #{dest}"
+    end
+  end
+
+  #ec "mv lib/fs_template lib/overlay"
 end

@@ -1,4 +1,4 @@
-module FsTemplate
+module Overlay
   class Project
     include FromHash
     attr_accessor :path
@@ -59,7 +59,7 @@ module FsTemplate
 
     def write_to!(output_path)
       commands(:before).each do |cmd|
-        FsTemplate.ec "cd #{output_path} && #{cmd}", :silent => true
+        Overlay.ec "cd #{output_path} && #{cmd}", :silent => true
         git_commit output_path, "Ran Command: #{cmd}"
       end
 
@@ -70,7 +70,7 @@ module FsTemplate
       git_commit output_path, "Overlay Files #{path}"
 
       commands(:after).each do |cmd|
-        FsTemplate.ec "cd #{output_path} && #{cmd}", :silent => true
+        Overlay.ec "cd #{output_path} && #{cmd}", :silent => true
         git_commit output_path, "Ran Command: #{cmd}"
       end
     end

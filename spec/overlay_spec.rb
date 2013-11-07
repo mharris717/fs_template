@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "FsTemplate" do
+describe "Overlay" do
   include_context "setup"
 
   it 'smoke' do

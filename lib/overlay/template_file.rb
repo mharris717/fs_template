@@ -1,4 +1,4 @@
-module FsTemplate
+module Overlay
   class TemplateFile
     include FromHash
     attr_accessor :path, :full_body

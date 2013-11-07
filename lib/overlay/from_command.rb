@@ -1,4 +1,4 @@
-module FsTemplate
+module Overlay
   class FromCommand
     include FromHash
     attr_accessor :command, :path
@@ -15,7 +15,7 @@ module FsTemplate
 
     fattr(:files) do
       with_tmp_dir do |dir|
-        FsTemplate.ec command, :silent => true
+        Overlay.ec command, :silent => true
         Files.load [dir,path].select { |x| x.present? }.join("/"), :file_class => BasicFile
       end
     end
