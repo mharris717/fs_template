@@ -183,18 +183,19 @@ describe "write project" do
     end
   end
 
-  describe "from combined" do
-    before do
-      Overapp::Files.write_combined repo_dir,overapp_dir,output_dir
-    end
+  if false
+    describe "from combined" do
+      before do
+        Overapp::Files.write_combined repo_dir,overapp_dir,output_dir
+      end
 
-    it 'has README' do
-      files_equal repo_dir, output_dir, "README.md"
-    end
+      it 'has README' do
+        files_equal repo_dir, output_dir, "README.md"
+      end
 
-    it 'has .abc' do
-      files_equal repo_dir, output_dir, ".abc"
+      it 'has .abc' do
+        files_equal repo_dir, output_dir, ".abc"
+      end
     end
-
   end
 end
