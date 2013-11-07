@@ -64,7 +64,7 @@ module Overapp
         raise "bad #{descriptor}" if descriptor.blank?
         if ops[:type] == :command
           load_command(descriptor,ops)
-        elsif descriptor =~ /\.git/
+        elsif descriptor =~ /\.git/ || descriptor =~ /file:\/\//
           load_repo(descriptor)
         else
           load_dir(descriptor,ops)
