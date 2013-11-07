@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "fs_template"
-  s.version = "0.1.2"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
-  s.date = "2013-11-01"
+  s.date = "2013-11-07"
   s.description = "fs_template"
   s.email = "mharris717@gmail.com"
   s.executables = ["fs_template"]
@@ -31,9 +31,11 @@ Gem::Specification.new do |s|
     "fs_template.gemspec",
     "lib/fs_template.rb",
     "lib/fs_template/files.rb",
+    "lib/fs_template/from_command.rb",
     "lib/fs_template/project.rb",
     "lib/fs_template/template_file.rb",
     "lib/fs_template/thor_file.rb",
+    "spec/from_command_spec.rb",
     "spec/fs_template_spec.rb",
     "spec/input/top/.overlay",
     "spec/input/top/b.txt",
