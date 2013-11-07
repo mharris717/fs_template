@@ -16,7 +16,8 @@ module Overapp
         existing = res.find { |x| x.path == top_file.path }
         if existing
           res -= [existing]
-          res << top_file.combined(existing)
+          new_file = top_file.combined(existing)
+          res << new_file if new_file
         else
           res << top_file
         end

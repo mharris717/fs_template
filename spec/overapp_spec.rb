@@ -57,22 +57,7 @@ describe "dotfile" do
   end
 end
 
-describe "combine - append" do
-  include_context "setup"
 
-  base_file "a.txt","stuff"
-  base_file "b.txt","here"
-  on_top_file "b.txt","FSTMODE:append\nother"
-
-  it 'combined size' do
-    combined.size.should == 2
-  end
-
-  it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
-    f.body.should == "here\nother"
-  end
-end
 
 describe "combine - append format2" do
   include_context "setup"
@@ -88,23 +73,6 @@ describe "combine - append format2" do
   it 'combined file should overwrite' do
     f = combined.files.find { |x| x.path == "b.txt" }
     f.body.should == "here\nother"
-  end
-end
-
-describe "combine - insert" do
-  include_context "setup"
-
-  base_file "a.txt","stuff"
-  base_file "b.txt","a\nb\nc\nd"
-  on_top_file "b.txt","FSTMODE:insert:line:2\nother\n"
-
-  it 'combined size' do
-    combined.size.should == 2
-  end
-
-  it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
-    f.body.should == "a\nother\nb\nc\nd"
   end
 end
 
@@ -142,6 +110,35 @@ describe "combine - insert before" do
   end
 end
 
+describe "combine - delete" do
+  include_context "setup"
+
+  base_file "a.txt","stuff"
+  base_file "b.txt","123\n456\n789"
+  on_top_file "b.txt","<overapp>action: delete\n</overapp>abc\n"
+
+  it 'combined size' do
+    combined.size.should == 1
+  end
+end
+
+describe "combine - multiple directives" do
+  include_context "setup"
+
+  base_file "a.txt","stuff"
+  base_file "b.txt","123\n456\n789"
+  on_top_file "b.txt","<overapp>action: replace\nbase: 123\n</overapp>abc<overapp>action: replace\nbase: 456\n</overapp>def"
+
+  it 'combined size' do
+    combined.size.should == 2
+  end
+
+  it 'combined file should overwrite' do
+    f = combined.files.find { |x| x.path == "b.txt" }
+    f.body.should == "abc\ndef\n789"
+  end
+end
+
 describe "combine - replace" do
   include_context "setup"
 
@@ -171,13 +168,4 @@ describe "combine - top file in new dir" do
   end
 end
 
-describe "combine - error" do
-  include_context "setup"
 
-  base_file "a.txt","stuff"
-  on_top_file "a.txt","FSTMODE:fgdfgdfg\nstuff"
-
-  it 'combined size' do
-    lambda { combined.size }.should raise_error
-  end
-end

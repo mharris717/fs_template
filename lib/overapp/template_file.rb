@@ -3,25 +3,37 @@ module Overapp
     include FromHash
     attr_accessor :path, :full_body
 
-    module NewWay
-      def split_note_and_body_long
-        if full_body =~ /<overapp>(.+)<\/overapp>/m
+    def split_note_and_body
+      res = []
+      remaining_body = full_body
+      while remaining_body
+        if remaining_body =~ /^<over(?:lay|app)>(.+)<\/over(?:lay|app)>(.*)(<over(?:lay|app)>.+)/m
           note = $1
-          rest = full_body.gsub(/<overapp>.+<\/overapp>/m,"")
-          {:note => note, :body => rest, :format => :long}
-        elsif full_body =~ /<overlay>(.+)<\/overlay>/m
+          rest = $2
+          remaining_body = $3
+          res << {:note => note, :body => rest}
+        elsif remaining_body =~ /^<over(?:lay|app)>(.+)<\/over(?:lay|app)>(.*)/m
           note = $1
-          rest = full_body.gsub(/<overlay>.+<\/overlay>/m,"")
-          {:note => note, :body => rest, :format => :long}
+          rest = $2
+          remaining_body = nil
+          res << {:note => note, :body => rest}
         else
-          nil
+          res << {:note => nil, :body => remaining_body}
+          remaining_body = nil
         end
       end
+      res
+    end
 
-      def note_params
-        res = {}
+
+    def note_params_single(one)
+      res = {}
+      note = one[:note]
+      res[:body] = one[:body]
+
+      if note
         lines = note.split("\n").select { |x| x.present? }
-        if lines.size == 1
+        if lines.size == 1 && !(lines.first =~ /action:/)
           res[:action] = lines.first.strip
         else
           lines.each do |line|
@@ -30,13 +42,25 @@ module Overapp
             res[parts[0].to_sym] = parts[1]
           end
         end
-        res
+      else
+        # do nothing
       end
+      res
+    end
+
+    def note_params
+      split_parts.map do |one|
+        note_params_single(one)
+      end
+    end
 
 
-      def apply_body_to_long(base_body)
-        params = note_params
-        if note == 'append'
+    def apply_body_to(base_body)
+      note_params.each do |params|
+        body = params[:body]
+        base_body = if params[:action].blank?
+          body
+        elsif params[:action] == 'append'
           base_body + body
         elsif params[:action] == 'insert' && params[:after]
           base_body.gsub(params[:after],"#{params[:after]}#{body}").tap do |subbed|
@@ -56,68 +80,28 @@ module Overapp
               raise "no change, couldn't find #{params[:base]} in \n#{base_body}"
             end
           end
+        elsif params[:action] == 'delete'
+          :delete
         else
-          raise "bad"
+          raise "bad #{params.inspect}"
         end
       end
+      base_body
     end
 
-    module OldWay
-      def split_note_and_body_short
-        if full_body =~ /^FSTMODE:([a-z:0-9]+)\s/m
-          note = $1
-          rest = full_body.gsub(/^FSTMODE:#{note}/,"")
-          {:note => note, :body => rest, :format => :short}
-        else
-          nil
-        end
-      end
+    fattr(:split_parts) { split_note_and_body }   
 
-      def apply_body_to_short(base_body)
-        note_parts = note.to_s.split(":")
-        if note == 'append'
-          base_body + body
-        elsif note_parts[0] == 'insert'
-          raise "bad" unless note_parts[1] == 'line'
-          base_lines = base_body.split("\n")
-          i = note_parts[2].to_i - 1
-          base_lines[0...i].join("\n") + body + base_lines[i..-1].join("\n")
-        else
-          raise "unknown note #{note}"
-        end
-      end
-    end
-
-    include OldWay
-    include NewWay
-
-    def split_note_and_body
-      [:split_note_and_body_short,:split_note_and_body_long].each do |meth|
-        res = send(meth)
-        return res if res
-      end
-      {:note => nil, :body => full_body}
-    end
-
-    fattr(:split_parts) { split_note_and_body }
-
-    fattr(:body) { split_parts[:body] }
-    fattr(:note) { split_parts[:note] }
-    fattr(:format) { split_parts[:format] }
-
-    def apply_body_to(base_body)
-      if note.present?
-        m = "apply_body_to_#{format}"
-        send(m,base_body)
-      else
-        body
-      end
-    end
-
-    
+    def body
+      full_body
+    end 
 
     def combined(base)
-      self.class.new(:path => path, :full_body => apply_body_to(base.body))
+      b = apply_body_to(base.full_body)
+      if b == :delete
+        nil
+      else
+        self.class.new(:path => path, :full_body => b)
+      end
     end
 
     def write_to!(dir)
