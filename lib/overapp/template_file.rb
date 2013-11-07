@@ -1,11 +1,15 @@
-module Overlay
+module Overapp
   class TemplateFile
     include FromHash
     attr_accessor :path, :full_body
 
     module NewWay
       def split_note_and_body_long
-        if full_body =~ /<overlay>(.+)<\/overlay>/m
+        if full_body =~ /<overapp>(.+)<\/overapp>/m
+          note = $1
+          rest = full_body.gsub(/<overapp>.+<\/overapp>/m,"")
+          {:note => note, :body => rest, :format => :long}
+        elsif full_body =~ /<overlay>(.+)<\/overlay>/m
           note = $1
           rest = full_body.gsub(/<overlay>.+<\/overlay>/m,"")
           {:note => note, :body => rest, :format => :long}

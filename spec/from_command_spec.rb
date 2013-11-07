@@ -6,7 +6,7 @@ describe 'FromCommand' do
   end
 
   let(:from_command) do
-    Overlay::FromCommand.new(:command => command, :path => "abc")
+    Overapp::FromCommand.new(:command => command, :path => "abc")
   end
 
   it 'files' do

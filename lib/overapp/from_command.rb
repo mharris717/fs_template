@@ -1,4 +1,4 @@
-module Overlay
+module Overapp
   class FromCommand
     include FromHash
     attr_accessor :command, :path
@@ -15,7 +15,7 @@ module Overlay
 
     fattr(:files) do
       with_tmp_dir do |dir|
-        Overlay.ec command, :silent => true
+        Overapp.ec command, :silent => true
         Files.load [dir,path].select { |x| x.present? }.join("/"), :file_class => BasicFile
       end
     end

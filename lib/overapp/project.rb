@@ -1,4 +1,4 @@
-module Overlay
+module Overapp
   class Project
     include FromHash
     attr_accessor :path
@@ -6,6 +6,8 @@ module Overlay
     def config_body
       if FileTest.exist?("#{path}/.fstemplate")
         File.read("#{path}/.fstemplate")
+      elsif FileTest.exist?("#{path}/.overapp")
+        File.read("#{path}/.overapp")
       elsif FileTest.exist?("#{path}/.overlay")
         File.read("#{path}/.overlay")
       else
@@ -20,16 +22,16 @@ module Overlay
       res
     end
 
-    def overlay_paths
-      config.overlays + [path]
+    def overapp_paths
+      config.overapps + [path]
     end
 
     def commands(phase)
       config.commands.select { |x| x[:phase] == phase }.map { |x| x[:command] }
     end
 
-    fattr(:overlays) do
-      overlay_paths.map { |x| Files.load(x) }
+    fattr(:overapps) do
+      overapp_paths.map { |x| Files.load(x) }
     end
 
     fattr(:base_files) do
@@ -42,8 +44,8 @@ module Overlay
 
     fattr(:combined_files) do
       res = base_files
-      overlays.each do |overlay|
-        res = res.apply(overlay)
+      overapps.each do |overapp|
+        res = res.apply(overapp)
       end
       res
     end
@@ -59,7 +61,7 @@ module Overlay
 
     def write_to!(output_path)
       commands(:before).each do |cmd|
-        Overlay.ec "cd #{output_path} && #{cmd}", :silent => true
+        Overapp.ec "cd #{output_path} && #{cmd}", :silent => true
         git_commit output_path, "Ran Command: #{cmd}"
       end
 
@@ -67,10 +69,10 @@ module Overlay
 
       git_commit output_path, "Base Files #{config.base}", true
       combined_files.write_to!(output_path)
-      git_commit output_path, "Overlay Files #{path}"
+      git_commit output_path, "Overapp Files #{path}"
 
       commands(:after).each do |cmd|
-        Overlay.ec "cd #{output_path} && #{cmd}", :silent => true
+        Overapp.ec "cd #{output_path} && #{cmd}", :silent => true
         git_commit output_path, "Ran Command: #{cmd}"
       end
     end
@@ -79,7 +81,7 @@ module Overlay
   class ProjectConfig
     include FromHash
     attr_accessor :body, :base, :base_ops
-    fattr(:overlays) { [] }
+    fattr(:overapps) { [] }
     fattr(:commands) { [] }
 
     def base(*args)
@@ -91,8 +93,8 @@ module Overlay
       end
     end
 
-    def overlay(name)
-      self.overlays << name
+    def overapp(name)
+      self.overapps << name
     end
 
     def command(cmd,phase=:after)

@@ -1,4 +1,4 @@
-module Overlay
+module Overapp
   class Files
     include FromHash
     include Enumerable

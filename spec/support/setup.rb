@@ -9,10 +9,10 @@ shared_context "setup" do
     end
   end
 
-  let(:file_class) { Overlay::TemplateFile }
+  let(:file_class) { Overapp::TemplateFile }
 
   let(:base) do
-    res = Overlay::Files.new(:file_class => file_class)
+    res = Overapp::Files.new(:file_class => file_class)
     self.class.files.select { |x| x[:loc] == :base }.each do |f|
       res.add f
     end
@@ -20,7 +20,7 @@ shared_context "setup" do
   end
 
   let(:on_top) do
-    res = Overlay::Files.new(:file_class => file_class)
+    res = Overapp::Files.new(:file_class => file_class)
     self.class.files.select { |x| x[:loc] == :on_top }.each do |f|
       res.add f
     end

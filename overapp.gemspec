@@ -4,15 +4,15 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "overlay"
+  s.name = "overapp"
   s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
   s.date = "2013-11-07"
-  s.description = "overlay"
+  s.description = "overapp"
   s.email = "mharris717@gmail.com"
-  s.executables = ["overlay"]
+  s.executables = ["overapp"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -27,20 +27,20 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "bin/overlay",
-    "lib/overlay.rb",
-    "lib/overlay/files.rb",
-    "lib/overlay/from_command.rb",
-    "lib/overlay/project.rb",
-    "lib/overlay/template_file.rb",
-    "lib/overlay/thor_file.rb",
-    "overlay.gemspec",
+    "bin/overapp",
+    "lib/overapp.rb",
+    "lib/overapp/files.rb",
+    "lib/overapp/from_command.rb",
+    "lib/overapp/project.rb",
+    "lib/overapp/template_file.rb",
+    "lib/overapp/thor_file.rb",
+    "overapp.gemspec",
     "spec/from_command_spec.rb",
     "spec/input/top/.overlay",
     "spec/input/top/b.txt",
     "spec/input/top/c.txt",
     "spec/input/top/place/d.txt",
-    "spec/overlay_spec.rb",
+    "spec/overapp_spec.rb",
     "spec/project_note_spec.rb",
     "spec/spec_helper.rb",
     "spec/support/output_dir.rb",
@@ -53,11 +53,11 @@ Gem::Specification.new do |s|
     "vol/input/top/place/d.txt",
     "vol/test_write.rb"
   ]
-  s.homepage = "http://github.com/mharris717/overlay"
+  s.homepage = "http://github.com/mharris717/overapp"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = "2.0.7"
-  s.summary = "overlay"
+  s.summary = "overapp"
 
   if s.respond_to? :specification_version then
     s.specification_version = 4

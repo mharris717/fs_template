@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "ProjectConfig" do
   let(:config) do
-    res = Overlay::ProjectConfig.new
+    res = Overapp::ProjectConfig.new
     res.body = config_body
     res
   end
@@ -22,61 +22,61 @@ describe "ProjectConfig" do
     end
   end
 
-  describe "base and overlay" do
+  describe "base and overapp" do
     let(:config_body) do
       "c.base :foo
-      c.overlay :bar"
+      c.overapp :bar"
     end
 
     it 'eval' do
       config.load!
       config.base.should == :foo
-      config.overlays.should == [:bar]
+      config.overapps.should == [:bar]
     end
   end
 
   it 'project no config' do
-    lambda { Overlay::Project.new.config }.should raise_error
+    lambda { Overapp::Project.new.config }.should raise_error
   end
 end
 
 describe 'Project' do
   let(:config_body) do
     "c.base :foo
-    c.overlay :bar"
+    c.overapp :bar"
   end
 
   let(:project) do
-    res = Overlay::Project.new(:path => "/fun")
+    res = Overapp::Project.new(:path => "/fun")
     res.stub(:config_body) { config_body }
     res
   end
 
   before do
-    Overlay::Files.stub(:load) { Overlay::Files.new }
+    Overapp::Files.stub(:load) { Overapp::Files.new }
   end
 
-  it 'overlays' do
-    project.overlays.size.should == 2
-    project.overlay_paths.last.should == "/fun"
+  it 'overapps' do
+    project.overapps.size.should == 2
+    project.overapp_paths.last.should == "/fun"
   end
 end
 
 describe 'Project with command' do
   let(:config_body) do
     "c.base :foo
-    c.overlay :bar
+    c.overapp :bar
     c.command 'ls'"
   end
 
   let(:project) do
-    res = Overlay::Project.new(:path => "/fun")
+    res = Overapp::Project.new(:path => "/fun")
     res.stub(:config_body) { config_body }
     res
   end
 
   before do
-    Overlay::Files.stub(:load) { Overlay::Files.new }
+    Overapp::Files.stub(:load) { Overapp::Files.new }
   end
 
   it 'commands' do
@@ -87,24 +87,24 @@ end
 describe 'Project order' do
   let(:config_body) do
     "c.base :foo
-    c.overlay :bar
+    c.overapp :bar
     c.command 'ls'"
   end
 
   let(:project) do
-    res = Overlay::Project.new(:path => "/tmp/a/b/c/fun")
+    res = Overapp::Project.new(:path => "/tmp/a/b/c/fun")
     res.stub(:config_body) { config_body }
     res
   end
 
   before do
-    Overlay::Files.stub(:load) { Overlay::Files.new }
+    Overapp::Files.stub(:load) { Overapp::Files.new }
   end
 
   it 'write' do
     output_path = "/tmp/f/t/r/r"
 
-    Overlay.should_receive(:ec).with("cd #{output_path} && ls", :silent => true)
+    Overapp.should_receive(:ec).with("cd #{output_path} && ls", :silent => true)
     project.stub(:git_commit)
     project.combined_files.stub("write_to!")
 
@@ -128,15 +128,15 @@ describe 'Project with no base' do
   end
 
   let(:project) do
-    res = Overlay::Project.new(:path => "/tmp/a/b/c/fun")
+    res = Overapp::Project.new(:path => "/tmp/a/b/c/fun")
     res.stub(:config_body) { config_body }
     res
   end
 
   it 'write' do
-    #Overlay.should_receive(:ec).with("echo stuff > abc.txt", :silent => true)
+    #Overapp.should_receive(:ec).with("echo stuff > abc.txt", :silent => true)
     project.stub(:git_commit)
-    project.stub(:overlay_paths) { [] }
+    project.stub(:overapp_paths) { [] }
 
     project.write_to! output_path
 
@@ -154,7 +154,7 @@ describe "write project" do
   let(:input_dir) do
     File.expand_path(File.dirname(__FILE__) + "/input")
   end
-  let(:overlay_dir) do
+  let(:overapp_dir) do
     "#{input_dir}/top"
   end
 
@@ -167,7 +167,7 @@ describe "write project" do
 
   describe "from git" do
     before do
-      Overlay.write_project overlay_dir, output_dir
+      Overapp.write_project overapp_dir, output_dir
     end
 
     it 'has README' do
@@ -175,7 +175,7 @@ describe "write project" do
     end
 
     it 'c.txt' do
-      files_equal overlay_dir, output_dir, "c.txt"
+      files_equal overapp_dir, output_dir, "c.txt"
     end
 
     it 'b.txt insert' do
@@ -185,7 +185,7 @@ describe "write project" do
 
   describe "from combined" do
     before do
-      Overlay::Files.write_combined repo_dir,overlay_dir,output_dir
+      Overapp::Files.write_combined repo_dir,overapp_dir,output_dir
     end
 
     it 'has README' do

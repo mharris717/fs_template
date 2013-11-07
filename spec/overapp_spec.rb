@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "Overlay" do
+describe "Overapp" do
   include_context "setup"
 
   it 'smoke' do
@@ -79,7 +79,7 @@ describe "combine - append format2" do
 
   base_file "a.txt","stuff"
   base_file "b.txt","here"
-  on_top_file "b.txt","<overlay>append</overlay>\nother"
+  on_top_file "b.txt","<overapp>append</overapp>\nother"
 
   it 'combined size' do
     combined.size.should == 2
@@ -113,7 +113,7 @@ describe "combine - insert after" do
 
   base_file "a.txt","stuff"
   base_file "b.txt","123\n456\n789"
-  on_top_file "b.txt","<overlay>action: insert\nafter: 456</overlay>\nabc"
+  on_top_file "b.txt","<overapp>action: insert\nafter: 456</overapp>\nabc"
 
   it 'combined size' do
     combined.size.should == 2
@@ -130,7 +130,7 @@ describe "combine - insert before" do
 
   base_file "a.txt","stuff"
   base_file "b.txt","123\n456\n789"
-  on_top_file "b.txt","<overlay>action: insert\nbefore: 456</overlay>abc\n"
+  on_top_file "b.txt","<overapp>action: insert\nbefore: 456</overapp>abc\n"
 
   it 'combined size' do
     combined.size.should == 2
@@ -147,7 +147,7 @@ describe "combine - replace" do
 
   base_file "a.txt","stuff"
   base_file "b.txt","123\n456\n789"
-  on_top_file "b.txt","<overlay>action: replace\nbase: 456</overlay>abc"
+  on_top_file "b.txt","<overapp>action: replace\nbase: 456</overapp>abc"
 
   it 'combined size' do
     combined.size.should == 2

@@ -28,6 +28,6 @@ Spork.each_run do
     require 'simplecov'
     SimpleCov.start
   end
-  load File.dirname(__FILE__) + "/../lib/overlay.rb"
+  load File.dirname(__FILE__) + "/../lib/overapp.rb"
   #Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| load f}
 end
