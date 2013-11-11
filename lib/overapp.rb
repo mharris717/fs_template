@@ -32,7 +32,7 @@ module Overapp
     end
 
     def ec(cmd,ops={})
-      `#{cmd}`
+      MharrisExt.ec(cmd,ops)
     end
   end
 end
