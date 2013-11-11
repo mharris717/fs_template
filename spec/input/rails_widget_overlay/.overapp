@@ -1,0 +1,1 @@
+c.base "mkdir config && echo route stuff > config/routes.rb", :type => :command

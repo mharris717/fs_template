@@ -3,15 +3,18 @@ module Overapp
     include FromHash
     attr_accessor :path
 
+    class << self
+      def project_files
+        %w(.fstemplate .overapp .overlay)
+      end
+    end
+
     def config_body
-      if FileTest.exist?("#{path}/.fstemplate")
-        File.read("#{path}/.fstemplate")
-      elsif FileTest.exist?("#{path}/.overapp")
-        File.read("#{path}/.overapp")
-      elsif FileTest.exist?("#{path}/.overlay")
-        File.read("#{path}/.overlay")
+      file = klass.project_files.map { |x| "#{path}/#{x}" }.find { |x| FileTest.exist?(x) }
+      if file
+        File.read(file)
       else
-        raise "no config"
+        raise "no config found in #{path}"
       end
     end
 
@@ -50,30 +53,45 @@ module Overapp
       res
     end
 
-    def git_commit(output_path,message,init=false)
-      if init
-        `rm -rf #{output_path}/.git`
-        ec "cd #{output_path} && git init && git config user.email johnsmith@fake.com && git config user.name 'John Smith'", :silent => true
-      end
-      ec "cd #{output_path} && git add . && git commit -m '#{message}'", :silent => true
+    def write_to!(output_path)
+      Write.new(:output_path => output_path, :project => self).write!
     end
 
+    class Write
+      include FromHash
+      attr_accessor :output_path, :project
 
-    def write_to!(output_path)
-      commands(:before).each do |cmd|
-        Overapp.ec "cd #{output_path} && #{cmd}", :silent => true
-        git_commit output_path, "Ran Command: #{cmd}"
+      def commands(phase); project.commands(phase); end
+      def base_files; project.base_files; end
+      def combined_files; project.combined_files; end
+      def config; project.config; end
+      def path; project.path; end
+
+      def git_commit(message,init=false)
+        if init
+          `rm -rf #{output_path}/.git`
+          ec "cd #{output_path} && git init && git config user.email johnsmith@fake.com && git config user.name 'John Smith'", :silent => true
+        end
+        ec "cd #{output_path} && git add . && git commit -m '#{message}'", :silent => true
       end
 
-      base_files.write_to! output_path
+      def run_commands!(phase)
+        commands(phase).each do |cmd|
+          Overapp.ec "cd #{output_path} && #{cmd}", :silent => true
+          git_commit output_path, "Ran Command: #{cmd}"
+        end
+      end
 
-      git_commit output_path, "Base Files #{config.base}", true
-      combined_files.write_to!(output_path)
-      git_commit output_path, "Overapp Files #{path}"
+      def write!
+        run_commands! :before
 
-      commands(:after).each do |cmd|
-        Overapp.ec "cd #{output_path} && #{cmd}", :silent => true
-        git_commit output_path, "Ran Command: #{cmd}"
+        base_files.write_to! output_path
+        git_commit "Base Files #{config.base}", true
+
+        combined_files.write_to!(output_path)
+        git_commit "Overapp Files #{path}"
+
+        run_commands! :after
       end
     end
   end

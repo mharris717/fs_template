@@ -105,7 +105,10 @@ describe 'Project order' do
     output_path = "/tmp/f/t/r/r"
 
     Overapp.should_receive(:ec).with("cd #{output_path} && ls", :silent => true)
-    project.stub(:git_commit)
+    Overapp::Project::Write.class_eval do
+      def git_commit(*args)
+      end
+    end
     project.combined_files.stub("write_to!")
 
     project.write_to! output_path

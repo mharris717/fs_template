@@ -42,6 +42,7 @@ module Overapp
         res - [".","..",".git"]
       end
       def load_dir(dir,ops={})
+        dir = dir.gsub "OVERAPP_ROOT_DIR", File.expand_path(File.dirname(__FILE__) + "/../..")
         raise "Bad dir" unless dir.present?
         raise "Dir not there #{dir}" unless FileTest.exist?(dir)
         res = new
@@ -79,7 +80,7 @@ module Overapp
       end
 
       def load_repo(url)
-        url = url.gsub "ROOT_DIR", File.expand_path(File.dirname(__FILE__) + "/../..")
+        url = url.gsub "OVERAPP_ROOT_DIR", File.expand_path(File.dirname(__FILE__) + "/../..")
         dir = "/tmp/#{rand(1000000000000000000)}"
         ec "git clone #{url} #{dir} 2>&1", :silent => true
         load dir

@@ -1,1 +1,1 @@
-c.base "file://ROOT_DIR/spec/input/repo"
+c.base "file://OVERAPP_ROOT_DIR/spec/input/repo"

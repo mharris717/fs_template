@@ -1,5 +1,26 @@
 require 'rubygems'
 require 'spork'
+require 'mharris_ext'
+
+class SpecGitDir
+  include FromHash
+  attr_accessor :dir
+
+  def setup!
+    `cp -r #{dir}/git_dir #{dir}/.git` unless FileTest.exist?("#{dir}/.git")
+  end
+
+  def teardown!
+    `rm -rf #{dir}/.git` if FileTest.exist?("#{dir}/.git")
+  end
+
+  class << self
+    def make(name)
+      dir = File.dirname(__FILE__) + "/input/#{name}"
+      new(:dir => dir)
+    end
+  end
+end
 
 
 Spork.prefork do
@@ -21,9 +42,18 @@ Spork.prefork do
     #config.filter_run :focus => true
     config.fail_fast = false
 
+    repo_dirs = %w(repo)
+
     config.before(:all) do
-      repo = File.dirname(__FILE__) + "/input/repo"
-      `cp -r #{repo}/git_dir #{repo}/.git` unless FileTest.exist?("#{repo}/.git")
+      repo_dirs.each do |dir|
+        SpecGitDir.make(dir).setup!
+      end
+    end
+
+    config.after(:all) do
+      repo_dirs.each do |dir|
+        SpecGitDir.make(dir).teardown!
+      end
     end
   end
 end
