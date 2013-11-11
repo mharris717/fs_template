@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "overapp"
-  s.version = "0.3.0"
+  s.version = "0.3.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
-  s.date = "2013-11-07"
+  s.date = "2013-11-11"
   s.description = "overapp"
   s.email = "mharris717@gmail.com"
   s.executables = ["overapp"]
