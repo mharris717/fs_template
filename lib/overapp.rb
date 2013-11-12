@@ -6,7 +6,7 @@ class Object
   end
 end
 
-%w(files template_file thor_file project from_command).each do |f|
+%w(files template_file project from_command).each do |f|
   load File.dirname(__FILE__) + "/overapp/#{f}.rb"
 end
 
