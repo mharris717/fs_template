@@ -6,22 +6,30 @@ class Object
   end
 end
 
-%w(files template_file project from_command).each do |f|
-  load File.dirname(__FILE__) + "/overapp/#{f}.rb"
+module Overapp
+  def self.load_files!
+    %w(files template_file project from_command).each do |f|
+      load File.dirname(__FILE__) + "/overapp/#{f}.rb"
+    end
+
+    %w(base command load_dir repo).each do |f|
+      load File.dirname(__FILE__) + "/overapp/load/#{f}.rb"
+    end
+
+    %w(config write).each do |f|
+      load File.dirname(__FILE__) + "/overapp/project/#{f}.rb"
+    end
+
+    %w(tmp_dir).each do |f|
+      load File.dirname(__FILE__) + "/overapp/util/#{f}.rb"
+    end
+  end
 end
+
+Overapp.load_files!
 
 module Overapp
   class << self
-    def with_repo_path(url)
-      dir = "/tmp/#{rand(100000000000000000000)}"
-      `mkdir #{dir}`
-      Dir.chdir(dir) do
-        `git clone #{url} .`
-      end
-      yield dir
-    ensure
-      `rm -rf #{dir}`
-    end
     def with_local_path(overapp_path,&b)
       if overapp_path =~ /git/
         with_repo_path(overapp_path) do |dir|
@@ -47,26 +55,6 @@ module Overapp
 
     def ec(cmd,ops={})
       `#{cmd}`
-    end
-  end
-end
-
-module Overapp
-  class << self
-    def with_tmp_dir(ops={})
-      dir = "/tmp/#{rand(1000000000000000000)}"
-      `mkdir #{dir}`
-      if block_given?
-        Dir.chdir(dir) do
-          yield dir
-        end
-      else
-        dir
-      end
-    ensure
-      if block_given?
-        ec "rm -rf #{dir}", :silent => true
-      end
     end
   end
 end
