@@ -7,6 +7,10 @@ module Overapp
       def project_files
         %w(.fstemplate .overapp .overlay)
       end
+
+      def project?(path)
+        !!project_files.map { |x| "#{path}/#{x}" }.find { |x| FileTest.exist?(x) }
+      end
     end
 
     def config_body

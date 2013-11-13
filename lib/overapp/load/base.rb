@@ -4,10 +4,13 @@ module Overapp
       include FromHash
       attr_accessor :descriptor
 
-      def apply(on_top)
-        load.apply(on_top)
+      def apply_to(base,ops)
+        base.apply(load)
       end
 
+      def commit_message
+        "Message Pending #{id}"
+      end
     end
   end
 end
