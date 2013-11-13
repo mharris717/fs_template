@@ -9,6 +9,6 @@ shared_context "output dir" do
   let(:output_dir) { make_fresh_output_dir }
 
   after do
-    `rm -rf #{output_dir}`
+    #`rm -rf #{output_dir}`
   end
 end

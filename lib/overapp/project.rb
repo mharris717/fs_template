@@ -33,32 +33,18 @@ module Overapp
       config.overapps + [path]
     end
 
-    def commands(phase)
-      config.commands.select { |x| x[:phase] == phase }.map { |x| x[:command] }
-    end
-
-    fattr(:overapps) do
-      overapp_paths.map { |x| Files.load(x) }
-    end
-
-    fattr(:base_files) do
-      if config.base
-        Files.load(config.base,config.base_ops)
-      else
-        nil
+    def overapps
+      overapp_paths.map do |path|
+        Load::Factory.new(:descriptor => path).loader
       end
-    end
-
-    fattr(:combined_files) do
-      res = base_files
-      overapps.each do |overapp|
-        res = res.apply(overapp)
-      end
-      res
     end
 
     def write_to!(output_path)
       Write.new(:output_path => output_path, :project => self).write!
+    end
+
+    def combined_files(output_path)
+      Write.new(:output_path => output_path, :project => self).combined_files
     end
   end
 end

@@ -12,13 +12,13 @@ module Overapp
       end
     ensure
       if block_given?
-        ec "rm -rf #{dir}", :silent => true
+        #ec "rm -rf #{dir}", :silent => true
       end
     end
 
     def self.with_repo_path(url)
       with do |dir|
-        `git clone #{url} .`
+        `git clone #{url} . 2>&1`
         yield dir
       end
     end

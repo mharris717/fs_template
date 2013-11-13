@@ -16,7 +16,7 @@ module Overapp
       load File.dirname(__FILE__) + "/overapp/load/#{f}.rb"
     end
 
-    %w(command raw_dir local_dir repo empty projects).each do |f|
+    %w(command raw_dir local_dir repo empty project).each do |f|
       load File.dirname(__FILE__) + "/overapp/load/types/#{f}.rb"
     end
 

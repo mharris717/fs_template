@@ -6,7 +6,7 @@ module Overapp
         ops = {}
         raise "Bad dir" unless dir.present?
         raise "Dir not there #{dir}" unless FileTest.exist?(dir)
-        res = new
+        res = Files.new
         res.file_class = ops[:file_class] if ops[:file_class]
         Overapp.dir_files(dir).each do |full_file|
           if FileTest.file?(full_file)

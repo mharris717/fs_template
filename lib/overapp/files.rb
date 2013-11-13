@@ -34,6 +34,7 @@ module Overapp
       each do |f|
         f.write_to! dir
       end
+      self
     end
 
     class << self

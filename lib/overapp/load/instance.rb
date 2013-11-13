@@ -5,7 +5,12 @@ module Overapp
       attr_accessor :path, :overlays
 
       fattr(:starting_files) do
-        Overapp::Files.new
+        raise "path doesn't exist #{path}" unless FileTest.exist?(path)
+        if Overapp.dir_files(path).empty?
+          Overapp::Files.new
+        else
+          RawDir.new(:descriptor => path).load
+        end
       end
 
       fattr(:combined_files) do
@@ -20,7 +25,9 @@ module Overapp
 
       def apply_overlay(base,overlay)
         Overapp::Git.commit(path,overlay.commit_message) do
-          overlay.apply_to(base, :path => path)
+          overlay.apply_to(base, :path => path).tap do |res|
+            res.write_to! path
+          end
         end
       end
     end

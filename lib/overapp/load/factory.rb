@@ -11,7 +11,7 @@ module Overapp
         elsif Git.repo?(descriptor)
           Repo.new(:descriptor => descriptor)
         else
-          LoadDir.new(:descriptor => descriptor)
+          LocalDir.new(:descriptor => descriptor)
         end
       end
     end

@@ -1,4 +1,5 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+if false
+  require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe 'FromCommand' do
   let(:command) do
@@ -14,4 +15,5 @@ describe 'FromCommand' do
     from_command.files.first.path.should == 'abc.txt'
     from_command.files.first.full_body.strip.should == 'stuff'
   end
+end
 end
