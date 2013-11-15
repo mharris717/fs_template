@@ -1,4 +1,5 @@
 require 'mharris_ext'
+require 'ptools'
 
 class Object
   def klass

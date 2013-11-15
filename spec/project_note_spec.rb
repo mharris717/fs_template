@@ -116,6 +116,29 @@ describe 'Project order' do
   end
 end
 
+describe 'Project order' do
+  let(:config_body) do
+    "c.base :foo
+    c.overapp '.'
+    c.overapp :bar"
+  end
+
+  let(:project) do
+    res = Overapp::Project.new(:path => "/tmp/a/b/c/fun")
+    res.stub(:config_body) { config_body }
+    res
+  end
+
+  before do
+    Overapp::Files.stub(:load) { Overapp::Files.new }
+  end
+
+  it "doesn't have self twice" do
+    project.overapp_entries.size.should == 3
+    project.overapp_entries[1].descriptor.should == "/tmp/a/b/c/fun"
+  end
+end
+
 if false
 describe 'Project with no base' do
   let(:config_body) do

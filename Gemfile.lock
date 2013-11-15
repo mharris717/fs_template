@@ -79,6 +79,7 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
+    ptools (1.2.2)
     rack (1.5.2)
     rake (10.1.0)
     rb-fsevent (0.9.3)
@@ -116,6 +117,7 @@ DEPENDENCIES
   jeweler (~> 1.8.4)
   lre
   mharris_ext (>= 1.7.1)
+  ptools
   rb-fsevent (~> 0.9)
   rdoc (~> 3.12)
   rspec (~> 2.8.0)

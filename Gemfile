@@ -29,3 +29,4 @@ gem 'mharris_ext',">= 1.7.1"
 gem 'andand'
 
 gem 'simplecov', :require => false, :group => :test
+gem 'ptools'

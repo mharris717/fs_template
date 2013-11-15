@@ -23,6 +23,9 @@ module Overapp
         end
       end
       res
+    rescue => exp
+      puts "Error in split_note_and_body #{path}"
+      raise exp
     end
 
 

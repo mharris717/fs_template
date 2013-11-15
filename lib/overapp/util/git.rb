@@ -9,7 +9,10 @@ module Overapp
           ec "cd #{output_path} && git init && git config user.email johnsmith@fake.com && git config user.name 'John Smith'", :silent => true
         end
 
-        ec "cd #{output_path} && git add . && git commit -m '#{message}'", :silent => true
+        begin
+          ec "cd #{output_path} && git add . && git commit -m '#{message}'", :silent => true
+        rescue; end
+        
         res
       end
       def commit(output_path,message,&b)

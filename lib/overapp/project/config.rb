@@ -22,6 +22,7 @@ module Overapp
 
     def load!
       c = self
+      puts body
       eval(body)
     end
   end

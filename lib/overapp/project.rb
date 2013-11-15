@@ -30,7 +30,14 @@ module Overapp
     end
 
     def overapp_entries
-      config.overapps + [ConfigEntry.new(:descriptor => path)]
+      res = config.overapps
+      local = config.overapps.find { |x| x.descriptor == "." }
+      if local
+        local.descriptor = path
+        res
+      else
+        res + [ConfigEntry.new(:descriptor => path)]
+      end
     end
 
     def overapps
