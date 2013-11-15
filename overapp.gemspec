@@ -119,6 +119,7 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<mharris_ext>, [">= 1.7.1"])
       s.add_runtime_dependency(%q<andand>, [">= 0"])
+      s.add_runtime_dependency(%q<ptools>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<bundler>, [">= 1.0.0"])
@@ -131,6 +132,7 @@ Gem::Specification.new do |s|
     else
       s.add_dependency(%q<mharris_ext>, [">= 1.7.1"])
       s.add_dependency(%q<andand>, [">= 0"])
+      s.add_dependency(%q<ptools>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<bundler>, [">= 1.0.0"])
@@ -144,6 +146,7 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<mharris_ext>, [">= 1.7.1"])
     s.add_dependency(%q<andand>, [">= 0"])
+    s.add_dependency(%q<ptools>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 2.8.0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<bundler>, [">= 1.0.0"])
