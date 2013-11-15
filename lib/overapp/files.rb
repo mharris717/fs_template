@@ -1,4 +1,13 @@
 module Overapp
+  class MissingBaseFileError < RuntimeError
+    include FromHash
+    attr_accessor :top_file, :base
+    def message
+      res = "Cannot overlay onto missing file #{top_file.path}\nBase File Count: #{base.files.size}\n"
+      res += base.map { |x| x.path }.join("\n")
+      res
+    end
+  end
   class Files
     include FromHash
     include Enumerable
@@ -19,7 +28,7 @@ module Overapp
           new_file = top_file.combined(existing)
           res << new_file if new_file
         elsif top_file.has_note?
-          raise "cannot overlay onto missing file #{top_file.path}"
+          raise MissingBaseFileError.new(:top_file => top_file, :base => self)
         else
           res << top_file
         end
@@ -34,57 +43,12 @@ module Overapp
       each do |f|
         f.write_to! dir
       end
+      self
     end
 
     class << self
-      def dir_files(dir)
-        res = Dir["#{dir}/**/*"] + Dir["#{dir}/**/.*"]
-        res - [".","..",".git"]
-      end
-      def load_dir(dir,ops={})
-        raise "Bad dir" unless dir.present?
-        raise "Dir not there #{dir}" unless FileTest.exist?(dir)
-        res = new
-        res.file_class = ops[:file_class] if ops[:file_class]
-        dir_files(dir).each do |full_file|
-          if FileTest.file?(full_file)
-            f = full_file.gsub("#{dir}/","")
-            raise "bad #{f}" if f == full_file
-            res.add :file => f, :body => File.read(full_file)
-          end
-        end
-        res
-      end
-
       def load_command(cmd,ops)
         FromCommand.new(:command => cmd, :path => ops[:path]||".").files
-      end
-
-      def load(descriptor, ops={})
-        raise "bad #{descriptor}" if descriptor.blank?
-        if ops[:type] == :command
-          load_command(descriptor,ops)
-        elsif descriptor =~ /\.git/ || descriptor =~ /file:\/\//
-          load_repo(descriptor)
-        else
-          load_dir(descriptor,ops)
-        end
-      end
-
-      def write_combined(base_dir, top_dir, output_dir)
-        base = load(base_dir)
-        top = load(top_dir)
-        combined = base.apply(top)
-        combined.write_to! output_dir
-      end
-
-      def load_repo(url)
-        url = url.gsub "ROOT_DIR", File.expand_path(File.dirname(__FILE__) + "/../..")
-        dir = "/tmp/#{rand(1000000000000000000)}"
-        ec "git clone #{url} #{dir} 2>&1", :silent => true
-        load dir
-      ensure
-        ec "rm -rf #{dir}", :silent => true
       end
     end
   end

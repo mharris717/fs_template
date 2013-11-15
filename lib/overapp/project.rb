@@ -3,15 +3,22 @@ module Overapp
     include FromHash
     attr_accessor :path
 
+    class << self
+      def project_files
+        %w(.fstemplate .overapp .overlay)
+      end
+
+      def project?(path)
+        !!project_files.map { |x| "#{path}/#{x}" }.find { |x| FileTest.exist?(x) }
+      end
+    end
+
     def config_body
-      if FileTest.exist?("#{path}/.fstemplate")
-        File.read("#{path}/.fstemplate")
-      elsif FileTest.exist?("#{path}/.overapp")
-        File.read("#{path}/.overapp")
-      elsif FileTest.exist?("#{path}/.overlay")
-        File.read("#{path}/.overlay")
+      file = klass.project_files.map { |x| "#{path}/#{x}" }.find { |x| FileTest.exist?(x) }
+      if file
+        File.read(file)
       else
-        raise "no config"
+        raise "no config found in #{path}"
       end
     end
 
@@ -22,92 +29,27 @@ module Overapp
       res
     end
 
-    def overapp_paths
-      config.overapps + [path]
+    def overapp_entries
+      config.overapps + [ConfigEntry.new(:descriptor => path)]
     end
 
-    def commands(phase)
-      config.commands.select { |x| x[:phase] == phase }.map { |x| x[:command] }
-    end
-
-    fattr(:overapps) do
-      overapp_paths.map { |x| Files.load(x) }
-    end
-
-    fattr(:base_files) do
-      if config.base
-        Files.load(config.base,config.base_ops)
-      else
-        nil
+    def overapps
+      overapp_entries.map do |entry|
+        if path == entry.descriptor
+          Load::RawDir.new(:descriptor => path)
+        else
+          Load::Factory.new(:descriptor => entry.descriptor, :type => entry.type, :entry_ops => entry.entry_ops).loader
+        end
       end
     end
-
-    fattr(:combined_files) do
-      res = base_files
-      overapps.each do |overapp|
-        res = res.apply(overapp)
-      end
-      res
-    end
-
-    def git_commit(output_path,message,init=false)
-      if init
-        `rm -rf #{output_path}/.git`
-        ec "cd #{output_path} && git init && git config user.email johnsmith@fake.com && git config user.name 'John Smith'", :silent => true
-      end
-      ec "cd #{output_path} && git add . && git commit -m '#{message}'", :silent => true
-    end
-
 
     def write_to!(output_path)
-      commands(:before).each do |cmd|
-        Overapp.ec "cd #{output_path} && #{cmd}", :silent => true
-        git_commit output_path, "Ran Command: #{cmd}"
-      end
-
-      base_files.write_to! output_path
-
-      git_commit output_path, "Base Files #{config.base}", true
-      combined_files.write_to!(output_path)
-      git_commit output_path, "Overapp Files #{path}"
-
-      commands(:after).each do |cmd|
-        Overapp.ec "cd #{output_path} && #{cmd}", :silent => true
-        git_commit output_path, "Ran Command: #{cmd}"
-      end
-    end
-  end
-
-  class ProjectConfig
-    include FromHash
-    attr_accessor :body, :base, :base_ops
-    fattr(:overapps) { [] }
-    fattr(:commands) { [] }
-
-    def base(*args)
-      if args.empty?
-        @base
-      else
-        @base = args.first
-        @base_ops = args[1] || {}
-      end
+      Write.new(:output_path => output_path, :project => self).write!
     end
 
-    def overapp(name)
-      self.overapps << name
-    end
-
-    def overlay(name)
-      overapp(name)
-    end
-
-    def command(cmd,phase=:after)
-      self.commands << {:command => cmd, :phase => phase}
-    end
-
-    def load!
-      c = self
-      eval(body)
+    def combined_files(output_path)
+      raise 'here'
+      Write.new(:output_path => output_path, :project => self).combined_files
     end
   end
 end

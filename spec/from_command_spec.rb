@@ -1,17 +1,29 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe 'FromCommand' do
+  include_context "tmp dir"
+  include_context "output dir"
+
   let(:command) do
     "mkdir abc && cd abc && echo stuff > abc.txt"
   end
 
-  let(:from_command) do
-    Overapp::FromCommand.new(:command => command, :path => "abc")
+  let(:config_body) do
+    "c.command '#{command}', :path => 'abc'"
   end
 
-  it 'files' do
-    from_command.files.size.should == 1
-    from_command.files.first.path.should == 'abc.txt'
-    from_command.files.first.full_body.strip.should == 'stuff'
+  before do
+    File.create "#{tmp_dir}/place.txt","fun"
+  end
+
+  let(:project) do
+    res = Overapp::Project.new(:path => tmp_dir)
+    res.stub(:config_body) { config_body }
+    res
+  end
+
+  it 'runs' do
+    project.write_to! output_dir
+    Dir["#{output_dir}/**/*.*"].should == ['abc.txt','place.txt'].map { |x| "#{output_dir}/#{x}" }
   end
 end

@@ -1,0 +1,1 @@
+c.command "mkdir config && echo route stuff > config/routes.rb"
