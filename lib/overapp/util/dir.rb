@@ -14,5 +14,10 @@ module Overapp
         yield overapp_path
       end
     end
+
+    def to_proper_dir(dir)
+      base = File.expand_path(File.dirname(__FILE__) + "/../../..")
+      dir.gsub("OVERAPP_ROOT_DIR",base)
+    end
   end
 end

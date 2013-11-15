@@ -1,29 +1,23 @@
 module Overapp
   class ProjectConfig
     include FromHash
-    attr_accessor :body, :base, :base_ops
+    attr_accessor :body, :base_ops
     fattr(:overapps) { [] }
-    fattr(:commands) { [] }
 
     def base(*args)
-      if args.empty?
-        @base
-      else
-        @base = args.first
-        @base_ops = args[1] || {}
-      end
+      overapp(*args)
     end
 
     def overapp(name)
-      self.overapps << name
+      self.overapps << ConfigEntry.new(:descriptor => name, :type => :overapp)
     end
 
     def overlay(name)
       overapp(name)
     end
 
-    def command(cmd,phase=:after)
-      self.commands << {:command => cmd, :phase => phase}
+    def command(cmd)
+      self.overapps << ConfigEntry.new(:descriptor => cmd, :type => :command)
     end
 
     def load!

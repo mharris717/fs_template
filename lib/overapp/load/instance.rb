@@ -9,13 +9,13 @@ module Overapp
         if Overapp.dir_files(path).empty?
           Overapp::Files.new
         else
-          RawDir.new(:descriptor => path).load
+          RawDir.new(:descriptor => path).load(nil,{})
         end
       end
 
       fattr(:combined_files) do
         files = starting_files
-
+        
         overlays.each do |overlay|
           files = apply_overlay(files,overlay)
         end
@@ -28,7 +28,7 @@ module Overapp
           overlay.apply_to(base, :path => path).tap do |res|
             res.write_to! path
           end
-        end
+        end.tap { |res| raise "nil return" unless res }
       end
     end
   end

@@ -29,13 +29,17 @@ module Overapp
       res
     end
 
-    def overapp_paths
-      config.overapps + [path]
+    def overapp_entries
+      config.overapps + [ConfigEntry.new(:descriptor => path)]
     end
 
     def overapps
-      overapp_paths.map do |path|
-        Load::Factory.new(:descriptor => path).loader
+      overapp_entries.map do |entry|
+        if path == entry.descriptor
+          Load::RawDir.new(:descriptor => path)
+        else
+          Load::Factory.new(:descriptor => entry.descriptor, :type => entry.type).loader
+        end
       end
     end
 
@@ -44,6 +48,7 @@ module Overapp
     end
 
     def combined_files(output_path)
+      raise 'here'
       Write.new(:output_path => output_path, :project => self).combined_files
     end
   end

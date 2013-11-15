@@ -20,7 +20,7 @@ module Overapp
       load File.dirname(__FILE__) + "/overapp/load/types/#{f}.rb"
     end
 
-    %w(config write).each do |f|
+    %w(config write config_entry).each do |f|
       load File.dirname(__FILE__) + "/overapp/project/#{f}.rb"
     end
 

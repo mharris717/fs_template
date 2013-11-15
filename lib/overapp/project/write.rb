@@ -4,7 +4,7 @@ module Overapp
       include FromHash
       attr_accessor :output_path, :project
 
-      def instance
+      fattr(:instance) do
         Load::Instance.new(:path => output_path, :overlays => project.overapps)
       end
 
@@ -13,6 +13,7 @@ module Overapp
       end
 
       def write!
+        raise "no combined files" unless combined_files
         combined_files.write_to!(output_path)
       end
     end

@@ -1,9 +1,9 @@
-if false
-  require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+if true
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 shared_context "tmp dir" do
   let(:tmp_dir) do
-    Overapp.with_tmp_dir
+    Overapp::TmpDir.with
   end
   before do
     tmp_dir
@@ -20,7 +20,7 @@ describe 'Nesting' do
     File.expand_path(File.dirname(__FILE__) + "/input/rails_widget_overlay")
   end
 
-  let(:widget_post_dir) do
+  let(:post_overlay_dir) do
     File.expand_path(File.dirname(__FILE__) + "/input/rails_post_overlay")
   end
 
@@ -37,7 +37,7 @@ describe 'Nesting' do
 
   describe 'runs base overlay commands' do
     before do
-      Overapp.write_project widget_post_dir,tmp_dir
+      Overapp.write_project post_overlay_dir,tmp_dir
     end
 
     it 'has post model' do

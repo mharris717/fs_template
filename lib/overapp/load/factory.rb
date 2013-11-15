@@ -6,8 +6,8 @@ module Overapp
 
       def loader
         raise "bad #{descriptor}" if descriptor.blank?
-        if type == :command
-          raise "command not implemented"
+        if type.to_s.to_sym == :command
+          Command.new(:descriptor => descriptor)
         elsif Git.repo?(descriptor)
           Repo.new(:descriptor => descriptor)
         else

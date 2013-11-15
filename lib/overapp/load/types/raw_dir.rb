@@ -1,8 +1,8 @@
 module Overapp
   module Load
     class RawDir < Base
-      def dir; descriptor; end
-      def load
+      def dir; Overapp.to_proper_dir(descriptor); end
+      def load(base,ops)
         ops = {}
         raise "Bad dir" unless dir.present?
         raise "Dir not there #{dir}" unless FileTest.exist?(dir)

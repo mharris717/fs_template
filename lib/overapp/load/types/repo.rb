@@ -3,9 +3,9 @@ module Overapp
     class Repo < Base
       def url; descriptor; end
 
-      def load
+      def load(base,ops)
         TmpDir.with_repo_path(url) do |dir|
-          LocalDir.new(:descriptor => dir).load
+          LocalDir.new(:descriptor => dir).load(base,ops)
         end
       end
     end

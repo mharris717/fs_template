@@ -1,4 +1,13 @@
 module Overapp
+  class MissingBaseFileError < RuntimeError
+    include FromHash
+    attr_accessor :top_file, :base
+    def message
+      res = "Cannot overlay onto missing file #{top_file.path}\nBase File Count: #{base.files.size}\n"
+      res += base.map { |x| x.path }.join("\n")
+      res
+    end
+  end
   class Files
     include FromHash
     include Enumerable
@@ -19,7 +28,7 @@ module Overapp
           new_file = top_file.combined(existing)
           res << new_file if new_file
         elsif top_file.has_note?
-          raise "cannot overlay onto missing file #{top_file.path}"
+          raise MissingBaseFileError.new(:top_file => top_file, :base => self)
         else
           res << top_file
         end

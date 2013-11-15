@@ -18,7 +18,7 @@ describe "ProjectConfig" do
 
     it 'eval' do
       config.load!
-      config.base.should == :foo
+      config.overapps.first.descriptor.should == :foo
     end
   end
 
@@ -30,8 +30,7 @@ describe "ProjectConfig" do
 
     it 'eval' do
       config.load!
-      config.base.should == :foo
-      config.overapps.should == [:bar]
+      config.overapps.map { |x| x.descriptor }.should == [:foo,:bar]
     end
   end
 
@@ -57,8 +56,8 @@ describe 'Project' do
   end
 
   it 'overapps' do
-    project.overapps.size.should == 2
-    project.overapp_paths.last.should == "/fun"
+    project.overapps.size.should == 3
+    project.overapp_entries.last.descriptor.should == "/fun"
   end
 end
 

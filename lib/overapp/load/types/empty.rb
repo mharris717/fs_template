@@ -1,7 +1,7 @@
 module Overapp
   module Load
     class Empty
-      def load
+      def load(base,ops)
         Overapp::Files.new
       end
     end

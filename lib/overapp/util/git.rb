@@ -12,8 +12,8 @@ module Overapp
         res
       end
       def commit(output_path,message,&b)
-        init = FileTest.exist?("#{output_path}/.git")
-        commit_inner(output_path,message,init)
+        init = !FileTest.exist?("#{output_path}/.git")
+        commit_inner(output_path,message,init,&b)
       end
 
       def repo?(path)

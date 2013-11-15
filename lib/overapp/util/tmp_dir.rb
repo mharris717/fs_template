@@ -17,6 +17,7 @@ module Overapp
     end
 
     def self.with_repo_path(url)
+      url = Overapp.to_proper_dir(url)
       with do |dir|
         `git clone #{url} . 2>&1`
         yield dir

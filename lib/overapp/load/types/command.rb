@@ -2,9 +2,9 @@ module Overapp
   module Load
     class Command < Base
       def command; descriptor; end
-      def apply_to(base,ops={})
-        Overapp.ec "cd #{ops[:path]} && #{command}"
-        RawDir.new(:descriptor => ops[:path]).load
+      def load(base,ops={})
+        Overapp.ec "cd #{ops[:path]} && #{command}", :silent => true
+        RawDir.new(:descriptor => ops[:path]).load(base,ops)
       end
     end
   end
