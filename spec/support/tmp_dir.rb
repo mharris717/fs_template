@@ -6,6 +6,6 @@ shared_context "tmp dir" do
     tmp_dir
   end
   after do
-    #puts "rm -rf #{tmp_dir}"
+    ec "rm -rf #{tmp_dir}", :silent => true
   end
 end

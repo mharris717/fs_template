@@ -11,7 +11,7 @@ class SpecGitDir
   end
 
   def teardown!
-    #`rm -rf #{dir}/.git` if FileTest.exist?("#{dir}/.git")
+    `rm -rf #{dir}/.git` if FileTest.exist?("#{dir}/.git")
   end
 
   class << self

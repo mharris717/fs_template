@@ -1,14 +1,11 @@
 shared_context "output dir" do
-  def make_fresh_output_dir
-    `mkdir /tmp/fresh_output` unless FileTest.exist?("/tmp/fresh_output")
-    dir = "/tmp/fresh_output/#{rand(10000000000000)}"
-    `mkdir #{dir}`
-    dir
+  let(:output_dir) do
+    Overapp::TmpDir.with
   end
-
-  let(:output_dir) { make_fresh_output_dir }
-
+  before do
+    output_dir
+  end
   after do
-    #`rm -rf #{output_dir}`
+    ec "rm -rf #{output_dir}", :silent => true
   end
 end
