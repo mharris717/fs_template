@@ -3,9 +3,9 @@ module Overapp
     def dir_files(dir)
       res = Dir["#{dir}/**/*"] + Dir["#{dir}/**/.*"]
       res = res - [".","..",".git"]
-      rej = res.select { |x| FileTest.file?(x) && File.binary?(x) && !(x =~ /\.txt/) }
-      raise rej.inspect unless rej.empty?
-      res
+      res.reject { |x| FileTest.file?(x) && File.binary?(x) && !(x =~ /\.txt/) }
+      #raise rej.inspect unless rej.empty?
+      #res - rej
     end
 
     def with_local_path(overapp_path,&b)
