@@ -8,6 +8,7 @@ module Overapp
           `rm -rf #{output_path}/.git`
           ec "cd #{output_path} && git init && git config user.email johnsmith@fake.com && git config user.name 'John Smith'", :silent => true
         end
+
         ec "cd #{output_path} && git add . && git commit -m '#{message}'", :silent => true
         res
       end

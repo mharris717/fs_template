@@ -16,8 +16,8 @@ module Overapp
       overapp(name)
     end
 
-    def command(cmd)
-      self.overapps << ConfigEntry.new(:descriptor => cmd, :type => :command)
+    def command(cmd,ops={})
+      self.overapps << ConfigEntry.new(:descriptor => cmd, :type => :command, :entry_ops => ops)
     end
 
     def load!

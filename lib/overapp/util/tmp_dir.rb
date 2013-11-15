@@ -1,7 +1,7 @@
 module Overapp
   class TmpDir
     def self.with(ops={})
-      dir = "/tmp/#{rand(1000000000000000000)}"
+      dir = "/tmp/#{rand(1000000000000000000)}_overapp"
       `mkdir #{dir}`
       if block_given?
         Dir.chdir(dir) do
