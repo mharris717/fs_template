@@ -40,7 +40,7 @@ Spork.prefork do
 
   RSpec.configure do |config|
     #config.filter_run :focus => true
-    config.fail_fast = true
+    config.fail_fast = false
 
     repo_dirs = %w(repo)
 
