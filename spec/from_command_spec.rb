@@ -24,6 +24,6 @@ describe 'FromCommand' do
 
   it 'runs' do
     project.write_to! output_dir
-    Dir["#{output_dir}/**/*.*"].should == ['abc.txt','place.txt'].map { |x| "#{output_dir}/#{x}" }
+    Dir["#{output_dir}/**/*.*"].sort.should == ['abc.txt','place.txt'].sort.map { |x| "#{output_dir}/#{x}" }
   end
 end
