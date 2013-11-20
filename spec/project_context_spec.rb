@@ -1,3 +1,4 @@
+if false
 class Object
   def dsl_method(name)
     attr_writer name
@@ -14,7 +15,7 @@ class Object
 end
 
 module MockRawDirLoader
-  class Factory
+  class FactoryOld
     include FromHash
     attr_accessor :files
     def new(*args)
@@ -22,7 +23,7 @@ module MockRawDirLoader
     end
   end
 
-  class FactoryNew
+  class Factory
     include FromHash
     attr_accessor :projects
     def new(ops)
@@ -56,7 +57,7 @@ class ProjectDSL
     res = Overapp::Project.new
     res.config_body = config || ""
     res.path = path
-    res.load_raw_dir_class = MockRawDirLoader::Factory.new(:files => files)
+    #res.load_raw_dir_class = MockRawDirLoader::Factory.new(:files => files)
     res
   end
 
@@ -86,6 +87,13 @@ shared_context "projects" do
   let(:combined) do
     project.write_to!(output_dir)
   end
+
+  before do
+    Overapp.stub(:dir_files) do |dir|
+      raise "dir_files call #{dir}"
+      Overapp.dir_files_real(dir)
+    end
+  end
 end
 
 describe "project context" do
@@ -112,6 +120,7 @@ describe "basic file loading" do
 
   project do |p|
     p.file "abc.txt","hello"
+    p.path "/tmp/fun#{rand(10000000000000)}"
   end
 
   it 'file count' do
@@ -142,7 +151,7 @@ describe "multiple projects" do
 
 
 end
-
+end
 
 
 

@@ -4,6 +4,11 @@ module Overapp
       include FromHash
       attr_accessor :descriptor
 
+      def initialize(ops={})
+        raise "no descriptor" unless ops[:descriptor].present?
+        from_hash(ops)
+      end
+
       def apply_to(base,ops)
         base.apply(load(base,ops))
       end
