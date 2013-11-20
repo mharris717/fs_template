@@ -3,68 +3,38 @@ module Overapp
     include FromHash
     attr_accessor :path, :full_body
 
-    def split_note_and_body
-      res = []
-      remaining_body = full_body
-      while remaining_body
-        if remaining_body =~ /^<over(?:lay|app)>(.+)<\/over(?:lay|app)>(.*)(<over(?:lay|app)>.+)/m
-          note = $1
-          rest = $2
-          remaining_body = $3
-          res << {:note => note, :body => rest}
-        elsif remaining_body =~ /^<over(?:lay|app)>(.+)<\/over(?:lay|app)>(.*)/m
-          note = $1
-          rest = $2
-          remaining_body = nil
-          res << {:note => note, :body => rest}
-        else
-          res << {:note => nil, :body => remaining_body}
-          remaining_body = nil
-        end
-      end
-      res
-    rescue => exp
-      puts "Error in split_note_and_body #{path}"
-      raise exp
+    fattr(:params_obj) do
+      Params.new(:full_body => full_body)
     end
 
-
-    def note_params_single(one)
-      res = {}
-      note = one[:note]
-      res[:body] = one[:body]
-
-      if note
-        lines = note.split("\n").select { |x| x.present? }
-        if lines.size == 1 && !(lines.first =~ /action:/)
-          res[:action] = lines.first.strip
-        else
-          lines.each do |line|
-            parts = line.split(":").select { |x| x.present? }
-            if parts.size > 2
-              parts = [parts[0],parts[1..-1].join(":")]
-            end
-            parts = parts.map { |x| x.strip }
-            raise "bad #{path} #{parts.inspect}" unless parts.size == 2
-            res[parts[0].to_sym] = parts[1]
-          end
-        end
-      end
-      res
+    def has_note?
+      params_obj.has_note?
     end
 
-    def note_params
-      split_parts.map do |one|
-        note_params_single(one)
+    class VarObj
+      include FromHash
+      attr_accessor :file
+
+      def method_missing(sym,*args,&b)
+        if file.vars.has_key?(sym)
+          file.vars[sym]
+        else
+          raise "not found #{sym}"
+        end
+      end
+
+      def render(body)
+        require 'erb'
+        erb = ERB.new(body)
+        erb.result(binding)
       end
     end
 
     def templated_body(params)
       body = params[:body]
       if params[:template] == 'erb'
-        require 'erb'
-        erb = ERB.new(body)
-        body = erb.result
+        v = VarObj.new(:file => self)
+        body = v.render(body)
       end
       body
     end
@@ -91,7 +61,7 @@ module Overapp
 
 
     def apply_body_to(base_body)
-      note_params.inject(base_body) do |new_base_body,params|
+      params_obj.inject(base_body) do |new_base_body,params|
         if params[:action].blank?
           params[:body]
         elsif params[:action]
@@ -100,11 +70,6 @@ module Overapp
           raise "bad"
         end
       end
-    end
-
-    fattr(:split_parts) { split_note_and_body }   
-    def has_note?
-      split_parts.any? { |x| x[:note].present? }
     end
 
     def body
@@ -126,6 +91,8 @@ module Overapp
       `mkdir -p #{d}`
       File.create "#{dir}/#{path}",body
     end
+
+    fattr(:vars) { {} }
   end
 
   class BasicFile < TemplateFile

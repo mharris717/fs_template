@@ -28,6 +28,10 @@ module Overapp
     %w(tmp_dir git dir cmd write).each do |f|
       load File.dirname(__FILE__) + "/overapp/util/#{f}.rb"
     end
+
+    %w(params).each do |f|
+      load File.dirname(__FILE__) + "/overapp/template_file/#{f}.rb"
+    end
   end
 end
 

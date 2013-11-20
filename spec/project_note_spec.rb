@@ -228,3 +228,7 @@ describe "write project" do
     end
   end
 end
+
+describe "loading" do
+  pending "test to load overlay project as raw dir"
+end

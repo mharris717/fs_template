@@ -13,7 +13,7 @@ module Overapp
       end
     end
 
-    def config_body
+    fattr(:config_body) do
       file = klass.project_files.map { |x| "#{path}/#{x}" }.find { |x| FileTest.exist?(x) }
       if file
         File.read(file)
@@ -41,11 +41,12 @@ module Overapp
     end
 
     fattr(:load_factory_class) { Load::Factory }
+    fattr(:load_raw_dir_class) { Load::RawDir }
 
     def overapps
       overapp_entries.map do |entry|
         if path == entry.descriptor
-          Load::RawDir.new(:descriptor => path)
+          load_raw_dir_class.new(:descriptor => path)
         else
           load_factory_class.new(:descriptor => entry.descriptor, :type => entry.type, :entry_ops => entry.entry_ops).loader
         end
