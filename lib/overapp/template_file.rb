@@ -49,8 +49,6 @@ module Overapp
             res[parts[0].to_sym] = parts[1]
           end
         end
-      else
-        # do nothing
       end
       res
     end
@@ -61,39 +59,47 @@ module Overapp
       end
     end
 
+    def templated_body(params)
+      body = params[:body]
+      if params[:template] == 'erb'
+        require 'erb'
+        erb = ERB.new(body)
+        body = erb.result
+      end
+      body
+    end
+
+    def body_after_action(base_body,params)
+      body = templated_body(params)
+
+      res = if params[:action] == 'append'
+        base_body + body
+      elsif params[:action] == 'insert' && params[:after]
+        base_body.gsub(params[:after],"#{params[:after]}#{body}")
+      elsif params[:action] == 'insert' && params[:before]
+        base_body.gsub(params[:before],"#{body}#{params[:before]}")
+      elsif params[:action] == 'replace' && params[:base]
+        base_body.gsub(params[:base],body)
+      elsif params[:action] == 'delete'
+        :delete
+      else
+        raise "bad #{params.inspect}"
+      end
+      raise ["no change",params.inspect,body,base_body].join("\n") if res == base_body
+      res
+    end
+
 
     def apply_body_to(base_body)
-      note_params.each do |params|
-        body = params[:body]
-        base_body = if params[:action].blank?
-          body
-        elsif params[:action] == 'append'
-          base_body + body
-        elsif params[:action] == 'insert' && params[:after]
-          base_body.gsub(params[:after],"#{params[:after]}#{body}").tap do |subbed|
-            if subbed == base_body
-              raise "no change, couldn't find #{params[:after]} to insert #{body} in \n#{base_body}"
-            end
-          end
-        elsif params[:action] == 'insert' && params[:before]
-          base_body.gsub(params[:before],"#{body}#{params[:before]}").tap do |subbed|
-            if subbed == base_body
-              raise "no change, couldn't find #{params[:before]} in \n#{base_body}"
-            end
-          end
-        elsif params[:action] == 'replace' && params[:base]
-          base_body.gsub(params[:base],body).tap do |subbed|
-            if subbed == base_body
-              raise "no change, couldn't find #{params[:base]} to replace with #{body} in \n#{base_body}"
-            end
-          end
-        elsif params[:action] == 'delete'
-          :delete
+      note_params.inject(base_body) do |new_base_body,params|
+        if params[:action].blank?
+          params[:body]
+        elsif params[:action]
+          body_after_action(new_base_body,params)
         else
-          raise "bad #{params.inspect}"
+          raise "bad"
         end
       end
-      base_body
     end
 
     fattr(:split_parts) { split_note_and_body }   
