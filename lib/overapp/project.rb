@@ -40,12 +40,14 @@ module Overapp
       end
     end
 
+    fattr(:load_factory_class) { Load::Factory }
+
     def overapps
       overapp_entries.map do |entry|
         if path == entry.descriptor
           Load::RawDir.new(:descriptor => path)
         else
-          Load::Factory.new(:descriptor => entry.descriptor, :type => entry.type, :entry_ops => entry.entry_ops).loader
+          load_factory_class.new(:descriptor => entry.descriptor, :type => entry.type, :entry_ops => entry.entry_ops).loader
         end
       end
     end
