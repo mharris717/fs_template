@@ -5,9 +5,9 @@ module Overapp
 
       def load(base,ops)
         if Overapp::Project.project? path
-          Project.new(:descriptor => path).load(base,ops)
+          Project.new(:descriptor => path)
         else
-          RawDir.new(:descriptor => path).load(base,ops)
+          RawDir.new(:descriptor => path)
         end
       end
     end

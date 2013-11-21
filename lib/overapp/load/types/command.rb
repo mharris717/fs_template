@@ -3,16 +3,24 @@ module Overapp
     class Command < Base
       attr_accessor :relative_output_path
       def command; descriptor; end
-      def load(base,ops={})
+
+      def target_path(dir)
         if relative_output_path.present?
-          TmpDir.with do |dir|
-            Overapp.ec "cd #{dir} && #{command}", :silent => false
-            RawDir.new(:descriptor => "#{dir}/#{relative_output_path}").load(base,ops)
-          end
+          "#{dir}/#{relative_output_path}"
         else
-          Overapp.ec "cd #{ops[:path]} && #{command}", :silent => false
-          RawDir.new(:descriptor => ops[:path]).load(base,ops)
+          dir
         end
+      end
+
+      def load(base,ops={})
+        base.with_tmp do |dir|
+          Overapp.ec "cd #{dir} && #{command}"
+          RawDir.new(:descriptor => target_path(dir))
+        end
+      end
+
+      def needs_write?
+        true
       end
     end
   end

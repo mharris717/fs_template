@@ -46,6 +46,13 @@ module Overapp
       self
     end
 
+    def with_tmp(&b)
+      Overapp::TmpDir.with do |dir|
+        write_to! dir
+        b[dir]
+      end
+    end
+
     class << self
       def load_command(cmd,ops)
         FromCommand.new(:command => cmd, :path => ops[:path]||".").files

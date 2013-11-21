@@ -16,7 +16,7 @@ module Overapp
         end
       ensure
         if block_given?
-          ec "rm -rf #{dir}", :silent => true
+          #ec "rm -rf #{dir}", :silent => true
         end
       end
 

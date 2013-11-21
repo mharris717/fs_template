@@ -10,7 +10,7 @@ module Overapp
       end
 
       def apply_to(base,ops)
-        base.apply(load(base,ops))
+        base.apply(load_full(base,ops))
       end
 
       def commit_message
@@ -19,6 +19,21 @@ module Overapp
 
       def load(*args)
         raise "load unimplemented"
+      end
+
+      def load_outer(base,ops={})
+        res = load(base,ops)
+        
+        res
+      end
+
+      def load_full(base,ops={})
+        res = load_outer(base,ops)
+        while res.kind_of?(Overapp::Load::Base)
+          res = res.load_outer(base,ops)
+        end
+        #puts "load on #{self.class}, old size #{base.size}, new size #{res.size}"
+        res
       end
     end
   end
