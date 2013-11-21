@@ -57,9 +57,8 @@ module Overapp
       Write.new(:output_path => output_path, :project => self).write!
     end
 
-    def combined_files(output_path)
-      raise 'here'
-      Write.new(:output_path => output_path, :project => self).combined_files
+    def combined_files
+      Write.new(:project => self).combined_files
     end
   end
 end

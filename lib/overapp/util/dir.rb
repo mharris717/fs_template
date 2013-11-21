@@ -11,6 +11,14 @@ module Overapp
     def dir_files(dir)
       dir_files_real(dir)
     end
+    def dir_files_full(dir)
+      raise "Dir not there #{dir}" unless FileTest.exist?(dir)
+      dir_files(dir).map do |full_file|
+        f = full_file.gsub("#{dir}/","")
+        raise "bad #{f}" if f == full_file
+        {:file => f, :body => File.read(full_file)}
+      end
+    end
 
     def with_local_path(overapp_path,&b)
       if Git.repo?(overapp_path)

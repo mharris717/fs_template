@@ -5,7 +5,8 @@ module Overapp
         File.expand_path(File.dirname(__FILE__) + "/../../../tmp")
       end
       def with(ops={})
-        dir = "#{base_dir}/#{rand(1000000000000000000)}"
+        d = Time.now.strftime("%Y%m%d%H%M%S%L")
+        dir = "#{base_dir}/td_#{d}_#{rand(10000000)}"
         `mkdir #{dir}`
         if block_given?
           Dir.chdir(dir) do
@@ -16,7 +17,10 @@ module Overapp
         end
       ensure
         if block_given?
-          #ec "rm -rf #{dir}", :silent => true
+          delete = lambda do
+            ec "rm -rf #{dir}", :silent => false
+          end
+          #ObjectSpace.define_finalizer(self, delete)
         end
       end
 

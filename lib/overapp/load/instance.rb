@@ -5,12 +5,7 @@ module Overapp
       attr_accessor :path, :overlays
 
       fattr(:starting_files) do
-        raise "path doesn't exist #{path}" unless FileTest.exist?(path)
-        if Overapp.dir_files(path).empty?
-          Overapp::Files.new
-        else
-          RawDir.new(:descriptor => path).load(nil,{})
-        end
+        Overapp::Files.new
       end
 
       fattr(:combined_files) do

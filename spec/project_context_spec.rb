@@ -1,4 +1,3 @@
-if false
 class Object
   def dsl_method(name)
     attr_writer name
@@ -52,11 +51,13 @@ end
 class ProjectDSL
   dsl_method :config
   dsl_method :path
+  attr_accessor :name
+  include FromHash
 
   fattr(:project) do
     res = Overapp::Project.new
     res.config_body = config || ""
-    res.path = path
+    res.path = path || "/tmp/#{rand(100000000000000000)}"
     #res.load_raw_dir_class = MockRawDirLoader::Factory.new(:files => files)
     res
   end
@@ -70,29 +71,36 @@ end
 shared_context "projects" do
   class << self
     def project(name="default",&b)
-      dsl = ProjectDSL.new
+      dsl = ProjectDSL.new(:name => name)
       b[dsl]
-      raise "project #{name} already exists" if projects[name]
-      self.projects[name] = dsl.project
+      raise "project #{name} already exists" if project_dsls[name]
+      self.project_dsls[name] = dsl
     end
-    def projects
-      @projects ||= {}
+    def project_dsls
+      @project_dsls ||= {}
     end
   end
 
   let(:project) do
-    self.class.projects.values.first
+    self.class.project_dsls.values.first.project
   end
 
   let(:combined) do
-    project.write_to!(output_dir)
+    project.combined_files
   end
 
   before do
-    Overapp.stub(:dir_files) do |dir|
-      raise "dir_files call #{dir}"
-      Overapp.dir_files_real(dir)
+    Overapp.stub(:dir_files_full) do |dir|
+      dsl = self.class.project_dsls.values.find { |x| x.project.path == dir || x.name.to_s == dir.to_s }
+      if dsl
+        dsl.files.map do |f|
+          {:file => f.path, :body => f.body}
+        end
+      else
+        raise "no dir #{dir}, possible: \n" + self.class.project_dsls.values.map { |x| x.project.path }.join("\n")
+      end
     end
+
   end
 end
 
@@ -120,7 +128,6 @@ describe "basic file loading" do
 
   project do |p|
     p.file "abc.txt","hello"
-    p.path "/tmp/fun#{rand(10000000000000)}"
   end
 
   it 'file count' do
@@ -146,12 +153,10 @@ describe "multiple projects" do
   end
 
   it 'file count' do
-    #combined.size.should == 2
+    combined.size.should == 2
   end
-
-
 end
-end
+
 
 
 
