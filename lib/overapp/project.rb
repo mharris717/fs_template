@@ -2,6 +2,7 @@ module Overapp
   class Project
     include FromHash
     attr_accessor :path
+    fattr(:vars) { config.vars }
 
     class << self
       def project_files
@@ -9,7 +10,12 @@ module Overapp
       end
 
       def project?(path)
+        raise "checking for project, path doesn't exist #{path}" unless FileTest.exist?(path)
         !!project_files.map { |x| "#{path}/#{x}" }.find { |x| FileTest.exist?(x) }
+      end
+
+      def load(*args)
+        new(*args)
       end
     end
 
@@ -31,7 +37,7 @@ module Overapp
 
     def overapp_entries
       res = config.overapps
-      local = config.overapps.find { |x| x.descriptor == "." }
+      local = config.overapps.find { |x| x.descriptor == "." || x.descriptor == :self }
       if local
         local.descriptor = path
         res

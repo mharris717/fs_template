@@ -5,7 +5,7 @@ module Overapp
       attr_accessor :output_path, :project
 
       fattr(:instance) do
-        Load::Instance.new(:overlays => project.overapps)
+        Load::Instance.new(:overlays => project.overapps, :vars => Overapp::Var.vars.merge(project.vars))
       end
 
       def combined_files

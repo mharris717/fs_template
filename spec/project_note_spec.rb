@@ -1,23 +1,33 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "ProjectConfig" do
+shared_context "p1" do
   let(:config) do
     res = Overapp::ProjectConfig.new
     res.body = config_body
+    res.load!
     res
   end
+
+  let(:project) do
+    res = Overapp::Project.new(:path => "/fun")
+    res.stub(:config_body) { config_body }
+    res
+  end
+
+  before do
+    Overapp::Files.stub(:load) { Overapp::Files.new }
+  end
+end
+
+describe "ProjectConfig" do
+  include_context "p1"
 
   describe "one base" do
     let(:config_body) do
       "c.base :foo"
     end
 
-    it 'smoke' do
-      config.should be
-    end
-
     it 'eval' do
-      config.load!
       config.overapps.first.descriptor.should == :foo
     end
   end
@@ -29,7 +39,6 @@ describe "ProjectConfig" do
     end
 
     it 'eval' do
-      config.load!
       config.overapps.map { |x| x.descriptor }.should == [:foo,:bar]
     end
   end
@@ -40,19 +49,10 @@ describe "ProjectConfig" do
 end
 
 describe 'Project' do
+  include_context "p1"
   let(:config_body) do
     "c.base :foo
     c.overapp :bar"
-  end
-
-  let(:project) do
-    res = Overapp::Project.new(:path => "/fun")
-    res.stub(:config_body) { config_body }
-    res
-  end
-
-  before do
-    Overapp::Files.stub(:load) { Overapp::Files.new }
   end
 
   it 'overapps' do
@@ -61,43 +61,35 @@ describe 'Project' do
   end
 end
 
+describe 'Project2' do
+  include_context "projects"
+  project do |p|
+    p.config "c.base :foo; c.overapp :bar"
+  end
+
+  it 'overapps' do
+    project.overapps.size.should == 3
+    project.overapp_entries.last.descriptor.should == project.path
+  end
+end
+
 describe 'Project with command' do
-  let(:config_body) do
-    "c.base :foo
-    c.overapp :bar
-    c.command 'ls'"
-  end
-
-  let(:project) do
-    res = Overapp::Project.new(:path => "/fun")
-    res.stub(:config_body) { config_body }
-    res
-  end
-
-  before do
-    Overapp::Files.stub(:load) { Overapp::Files.new }
+  include_context "projects"
+  project do |p|
+    p.config "c.base :foo; c.overapp :bar; c.command 'ls'"
   end
 
   it 'commands' do
-    #project.commands(:after).should == ["ls"]
+    project.overapps.size.should == 4
   end
 end
 
 describe 'Project order' do
+  include_context "p1"
   let(:config_body) do
     "c.base :foo
     c.overapp :bar
     c.command 'ls'"
-  end
-
-  let(:project) do
-    res = Overapp::Project.new(:path => "/tmp/a/b/c/fun")
-    res.stub(:config_body) { config_body }
-    res
-  end
-
-  before do
-    Overapp::Files.stub(:load) { Overapp::Files.new }
   end
 
   if false
@@ -117,62 +109,18 @@ describe 'Project order' do
 end
 
 describe 'Project order' do
+  include_context "p1"
   let(:config_body) do
     "c.base :foo
     c.overapp '.'
     c.overapp :bar"
   end
 
-  let(:project) do
-    res = Overapp::Project.new(:path => "/tmp/a/b/c/fun")
-    res.stub(:config_body) { config_body }
-    res
-  end
-
-  before do
-    Overapp::Files.stub(:load) { Overapp::Files.new }
-  end
-
   it "doesn't have self twice" do
     project.overapp_entries.size.should == 3
-    project.overapp_entries[1].descriptor.should == "/tmp/a/b/c/fun"
+    project.overapp_entries[1].descriptor.should == "/fun"
   end
 end
-
-if false
-describe 'Project with no base' do
-  let(:config_body) do
-    "c.base 'mkdir foo && echo stuff > foo/abc.txt', :type => :command, :path => :foo"
-  end
-
-  let(:output_path) do
-    res = "/tmp/#{rand(1000000000000000)}"
-    `mkdir #{res}`
-    res
-  end
-
-  after do
-    #`rm -rf #{output_path}`
-  end
-
-  let(:project) do
-    res = Overapp::Project.new(:path => "/tmp/a/b/c/fun")
-    res.stub(:config_body) { config_body }
-    res
-  end
-
-  it 'write' do
-    #Overapp.should_receive(:ec).with("echo stuff > abc.txt", :silent => true)
-    project.stub(:git_commit)
-    project.stub(:overapp_paths) { [] }
-
-    project.write_to! output_path
-
-    File.read("#{output_path}/abc.txt").strip.should == 'stuff'
-  end
-end
-end
-
 
 describe "write project" do
   include_context "output dir"
@@ -211,24 +159,4 @@ describe "write project" do
       File.read("#{output_dir}/b.txt").should == %w(a 1 2 b c d).join("\n") + "\n"
     end
   end
-
-  if false
-    describe "from combined" do
-      before do
-        Overapp::Files.write_combined repo_dir,overapp_dir,output_dir
-      end
-
-      it 'has README' do
-        files_equal repo_dir, output_dir, "README.md"
-      end
-
-      it 'has .abc' do
-        files_equal repo_dir, output_dir, ".abc"
-      end
-    end
-  end
-end
-
-describe "loading" do
-  pending "test to load overlay project as raw dir"
 end

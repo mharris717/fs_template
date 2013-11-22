@@ -11,25 +11,6 @@ module Overapp
       params_obj.has_note?
     end
 
-    class VarObj
-      include FromHash
-      attr_accessor :file
-
-      def method_missing(sym,*args,&b)
-        if file.vars.has_key?(sym)
-          file.vars[sym]
-        else
-          raise "not found #{sym}"
-        end
-      end
-
-      def render(body)
-        require 'erb'
-        erb = ERB.new(body)
-        erb.result(binding)
-      end
-    end
-
     def templated_body(params)
       body = params[:body]
       if params[:template] == 'erb'
@@ -41,29 +22,13 @@ module Overapp
 
     def body_after_action(base_body,params)
       body = templated_body(params)
-
-      res = if params[:action] == 'append'
-        base_body + body
-      elsif params[:action] == 'insert' && params[:after]
-        base_body.gsub(params[:after],"#{params[:after]}#{body}")
-      elsif params[:action] == 'insert' && params[:before]
-        base_body.gsub(params[:before],"#{body}#{params[:before]}")
-      elsif params[:action] == 'replace' && params[:base]
-        base_body.gsub(params[:base],body)
-      elsif params[:action] == 'delete'
-        :delete
-      else
-        raise "bad #{params.inspect}"
-      end
-      raise ["no change",params.inspect,body,base_body].join("\n") if res == base_body
-      res
+      BodyMod.transform(base_body,body,params)
     end
-
 
     def apply_body_to(base_body)
       params_obj.inject(base_body) do |new_base_body,params|
         if params[:action].blank?
-          params[:body]
+          templated_body(params)
         elsif params[:action]
           body_after_action(new_base_body,params)
         else
@@ -93,6 +58,9 @@ module Overapp
     end
 
     fattr(:vars) { {} }
+    def parsed
+      combined(OpenStruct.new(:full_body => ""))
+    end
   end
 
   class BasicFile < TemplateFile

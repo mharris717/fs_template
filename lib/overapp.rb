@@ -9,7 +9,7 @@ end
 
 module Overapp
   def self.load_files!
-    %w(files template_file project from_command).each do |f|
+    %w(files template_file project from_command var).each do |f|
       load File.dirname(__FILE__) + "/overapp/#{f}.rb"
     end
 
@@ -29,7 +29,7 @@ module Overapp
       load File.dirname(__FILE__) + "/overapp/util/#{f}.rb"
     end
 
-    %w(params).each do |f|
+    %w(params body_mod var_obj).each do |f|
       load File.dirname(__FILE__) + "/overapp/template_file/#{f}.rb"
     end
   end

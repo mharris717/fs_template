@@ -3,6 +3,7 @@ module Overapp
     class Instance
       include FromHash
       attr_accessor :path, :overlays
+      fattr(:vars) { {} }
 
       fattr(:starting_files) do
         Overapp::Files.new
@@ -26,7 +27,7 @@ module Overapp
         end.tap { |res| raise "nil return" unless res }
       end
       def apply_overlay(base,overlay)
-        overlay.load_full(base)
+        overlay.load_full(base,:vars => vars)
       end
     end
   end

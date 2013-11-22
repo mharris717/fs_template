@@ -42,7 +42,7 @@ module Overapp
 
         if note
           lines = note.split("\n").select { |x| x.present? }
-          if lines.size == 1 && !(lines.first =~ /action:/)
+          if (lines.size == 1) && !(lines.first =~ /[a-z]+:/)
             res[:action] = lines.first.strip
           else
             lines.each do |line|
@@ -68,7 +68,7 @@ module Overapp
       end
 
       def has_note?
-        split_parts.any? { |x| x[:note].present? }
+        note_params.any? { |x| x[:action].present? }
       end
     end
   end

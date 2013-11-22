@@ -17,7 +17,7 @@ module Overapp
       end
 
       def load(base,ops={})
-        base.apply(load_independent)
+        base.apply(load_independent,ops)
       end
     end
   end

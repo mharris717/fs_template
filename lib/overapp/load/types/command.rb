@@ -14,7 +14,7 @@ module Overapp
 
       def load(base,ops={})
         base.with_tmp do |dir|
-          Overapp.ec "cd #{dir} && #{command}"
+          Overapp.ec "cd #{dir} && #{command}", :silent => true
           RawDir.new(:descriptor => target_path(dir))
         end
       end

@@ -3,6 +3,7 @@ module Overapp
     include FromHash
     attr_accessor :body, :base_ops
     fattr(:overapps) { [] }
+    fattr(:vars) { {} }
 
     def base(*args)
       overapp(*args)
@@ -18,6 +19,10 @@ module Overapp
 
     def command(cmd,ops={})
       self.overapps << ConfigEntry.new(:descriptor => cmd, :type => :command, :entry_ops => ops)
+    end
+
+    def var(k,v)
+      vars[k] = v
     end
 
     def load!

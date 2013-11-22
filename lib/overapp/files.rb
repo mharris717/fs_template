@@ -3,7 +3,7 @@ module Overapp
     include FromHash
     attr_accessor :top_file, :base
     def message
-      res = "Cannot overlay onto missing file #{top_file.path}\nBase File Count: #{base.files.size}\n"
+      res = "Cannot overlay onto missing file #{top_file.path}\nBase File Count: #{base.files.size}\n#{top_file.params_obj.note_params.inspect}"
       res += base.map { |x| x.path }.join("\n")
       res
     end
@@ -19,9 +19,13 @@ module Overapp
     def size
       files.size
     end
-    def apply(on_top)
+    def apply(on_top,ops={})
       res = files.clone
       on_top.each do |top_file|
+        if ops[:vars] && ops[:vars].size > 0
+          #raise ops[:vars].inspect
+          top_file.vars = ops[:vars]
+        end
         existing = res.find { |x| x.path == top_file.path }
         if existing
           res -= [existing]
@@ -30,7 +34,7 @@ module Overapp
         elsif top_file.has_note?
           raise MissingBaseFileError.new(:top_file => top_file, :base => self)
         else
-          res << top_file
+          res << top_file.parsed
         end
       end
       self.class.new(:files => res)

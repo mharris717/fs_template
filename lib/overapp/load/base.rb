@@ -22,9 +22,7 @@ module Overapp
       end
 
       def load_outer(base,ops={})
-        res = load(base,ops)
-        
-        res
+        load(base,ops)
       end
 
       def load_full(base,ops={})

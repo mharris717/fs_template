@@ -1,4 +1,3 @@
-if false
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe 'Template' do
@@ -32,6 +31,16 @@ describe 'Template' do
     end
   end
 
+  describe "no vars, no base" do
+    let(:body) do
+      "<%= 2+2 %>"
+    end
+
+    it 'works' do
+      template_file.parsed.full_body.should == "\n4"
+    end
+  end
+
   describe "has var" do
     let(:body) do
       "<%= foo %>"
@@ -39,20 +48,6 @@ describe 'Template' do
 
     before do
       template_file.vars[:foo] = "bar"
-    end
-
-    it 'works' do
-      combined.full_body.should == "abc\nbar"
-    end
-  end
-
-  describe "global var" do
-    let(:body) do
-      "<%= foo %>"
-    end
-
-    before do
-      #template_file.vars[:foo] = "bar"
     end
 
     it 'works' do
@@ -75,5 +70,4 @@ describe 'Template' do
       combined.full_body.should == "abc\n<%= 2+2 %>"
     end
   end
-end
 end
