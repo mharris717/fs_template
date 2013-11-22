@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "overapp"
-  s.version = "0.4.2"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
-  s.date = "2013-11-16"
+  s.date = "2013-11-22"
   s.description = "overapp"
   s.email = "mharris717@gmail.com"
   s.executables = ["overapp"]
@@ -45,13 +45,19 @@ Gem::Specification.new do |s|
     "lib/overapp/project/config_entry.rb",
     "lib/overapp/project/write.rb",
     "lib/overapp/template_file.rb",
+    "lib/overapp/template_file/body_mod.rb",
+    "lib/overapp/template_file/params.rb",
+    "lib/overapp/template_file/var_obj.rb",
     "lib/overapp/util/cmd.rb",
     "lib/overapp/util/dir.rb",
     "lib/overapp/util/git.rb",
     "lib/overapp/util/tmp_dir.rb",
     "lib/overapp/util/write.rb",
+    "lib/overapp/var.rb",
     "overapp.gemspec",
+    "spec/command_replacement_spec.rb",
     "spec/from_command_spec.rb",
+    "spec/git_spec.rb",
     "spec/input/rails_post_overlay/.overapp",
     "spec/input/rails_post_overlay/app/models/post.rb",
     "spec/input/rails_widget_overlay/.overapp",
@@ -93,11 +99,14 @@ Gem::Specification.new do |s|
     "spec/input/top/place/d.txt",
     "spec/nesting_spec.rb",
     "spec/overapp_spec.rb",
+    "spec/project_context_spec.rb",
     "spec/project_note_spec.rb",
     "spec/spec_helper.rb",
     "spec/support/output_dir.rb",
+    "spec/support/project.rb",
     "spec/support/setup.rb",
     "spec/support/tmp_dir.rb",
+    "spec/template_spec.rb",
     "tmp/.gitkeep",
     "vol/input/base/a.txt",
     "vol/input/base/b.txt",
