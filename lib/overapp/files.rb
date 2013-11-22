@@ -56,11 +56,5 @@ module Overapp
         b[dir]
       end
     end
-
-    class << self
-      def load_command(cmd,ops)
-        FromCommand.new(:command => cmd, :path => ops[:path]||".").files
-      end
-    end
   end
 end

@@ -18,10 +18,6 @@ module Overapp
           RawDir.new(:descriptor => target_path(dir))
         end
       end
-
-      def needs_write?
-        true
-      end
     end
   end
 end

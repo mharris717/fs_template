@@ -60,6 +60,16 @@ describe "projects" do
     has_file "app.js","App = Em.Application.create()\nauth = true"
   end
 
+  describe "missing base file" do
+    project do |p|
+      p.file "README","Hello",action: :append
+    end
+
+    it 'errors' do
+      lambda { combined.size }.should raise_error(Overapp::MissingBaseFileError,/./)
+    end
+  end
+
   describe "template file with project var" do
     project do |p|
       p.file "README","Hello <%= foo %>", :template => "erb"
@@ -103,20 +113,18 @@ describe "projects" do
     has_file "README","Hello baz"
   end
 
-  if false
-    describe "refs self" do
-      project "base" do |p|
-        p.config "c.overlay :self; c.overlay 'auth'"
-        p.file "README","hello"
-      end
-
-      project "auth" do |p|
-        p.file "README"," auth stuff", :action => :append
-      end
-
-      has_files 1
-      has_file "README","hello auth stuff"
+  describe "refs self", :pending => true do
+    project "base" do |p|
+      p.config "c.overlay :self; c.overlay 'auth'"
+      p.file "README","hello"
     end
+
+    project "auth" do |p|
+      p.file "README"," auth stuff", :action => :append
+    end
+
+    has_files 1
+    has_file "README","hello auth stuff"
   end
 end
 

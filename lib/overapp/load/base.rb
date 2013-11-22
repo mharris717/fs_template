@@ -9,28 +9,15 @@ module Overapp
         from_hash(ops)
       end
 
-      def apply_to(base,ops)
-        base.apply(load_full(base,ops))
-      end
-
       def commit_message
         "Message Pending"
       end
 
-      def load(*args)
-        raise "load unimplemented"
-      end
-
-      def load_outer(base,ops={})
-        load(base,ops)
-      end
-
       def load_full(base,ops={})
-        res = load_outer(base,ops)
+        res = load(base,ops)
         while res.kind_of?(Overapp::Load::Base)
-          res = res.load_outer(base,ops)
+          res = res.load(base,ops)
         end
-        #puts "load on #{self.class}, old size #{base.size}, new size #{res.size}"
         res
       end
     end

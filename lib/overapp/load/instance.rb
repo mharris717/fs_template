@@ -19,13 +19,6 @@ module Overapp
         files
       end
 
-      def apply_overlay_old(base,overlay)
-        Overapp::Git.commit(path,overlay.commit_message) do
-          overlay.apply_to(base, :path => path).tap do |res|
-            res.write_to! path
-          end
-        end.tap { |res| raise "nil return" unless res }
-      end
       def apply_overlay(base,overlay)
         overlay.load_full(base,:vars => vars)
       end
