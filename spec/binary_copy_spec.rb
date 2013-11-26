@@ -1,3 +1,5 @@
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+
 describe 'binary' do
   it 'smoke' do
     path = File.dirname(__FILE__) + "/input/rails.png"
