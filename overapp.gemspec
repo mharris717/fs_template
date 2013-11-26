@@ -9,13 +9,13 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
-  s.date = "2013-11-22"
+  s.date = "2013-11-26"
   s.description = "overapp"
   s.email = "mharris717@gmail.com"
   s.executables = ["overapp"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.rdoc"
+    "README.md"
   ]
   s.files = [
     ".document",
@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
     "Gemfile.lock",
     "Guardfile",
     "LICENSE.txt",
-    "README.rdoc",
+    "README.md",
     "Rakefile",
     "VERSION",
     "bin/overapp",
@@ -55,9 +55,11 @@ Gem::Specification.new do |s|
     "lib/overapp/util/write.rb",
     "lib/overapp/var.rb",
     "overapp.gemspec",
+    "spec/binary_copy_spec.rb",
     "spec/command_replacement_spec.rb",
     "spec/from_command_spec.rb",
     "spec/git_spec.rb",
+    "spec/input/rails.png",
     "spec/input/rails_post_overlay/.overapp",
     "spec/input/rails_post_overlay/app/models/post.rb",
     "spec/input/rails_widget_overlay/.overapp",
