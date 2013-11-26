@@ -4,55 +4,46 @@ describe 'FromCommand' do
   include_context "tmp dir"
   include_context "output dir"
 
-  let(:command) do
-    "mkdir abc && cd abc && echo stuff > abc.txt"
-  end
-
-  let(:config_body) do
-    "c.command '#{command}', :path => 'abc'"
-  end
-
-  before do
-    File.create "#{tmp_dir}/place.txt","fun"
-  end
-
   let(:project) do
     res = Overapp::Project.new(:path => tmp_dir)
     res.stub(:config_body) { config_body }
     res
   end
 
-  it 'runs' do
-    project.write_to! output_dir
-    Dir["#{output_dir}/**/*.*"].sort.should == ['abc.txt','place.txt'].sort.map { |x| "#{output_dir}/#{x}" }
-  end
-end
-
-describe 'FromCommand2' do
-  include_context "tmp dir"
-  include_context "output dir"
-
-  let(:command) do
-    "echo stuff > abc.txt"
-  end
-
-  let(:config_body) do
-    "c.command '#{command}'"
-  end
-
   before do
     File.create "#{tmp_dir}/place.txt","fun"
-  end
-
-  let(:project) do
-    res = Overapp::Project.new(:path => tmp_dir)
-    res.stub(:config_body) { config_body }
-    res
-  end
-
-  it 'runs' do
     project.write_to! output_dir
-    Dir["#{output_dir}/**/*.*"].sort.should == ['abc.txt','place.txt'].sort.map { |x| "#{output_dir}/#{x}" }
+  end
+
+  def files_should_equal(files)
+    Dir["#{output_dir}/**/*.*"].sort.should == files.sort.map { |x| "#{output_dir}/#{x}" }
+  end
+
+  describe "with subdir" do
+    let(:command) do
+      "mkdir abc && cd abc && echo stuff > abc.txt"
+    end
+
+    let(:config_body) do
+      "c.command '#{command}', :path => 'abc'"
+    end
+
+    it 'has files' do
+      files_should_equal ['abc.txt','place.txt']
+    end
+  end
+
+  describe "at root" do
+    let(:command) do
+      "echo stuff > abc.txt"
+    end
+
+    let(:config_body) do
+      "c.command '#{command}'"
+    end
+
+    it 'has files' do
+      files_should_equal ['abc.txt','place.txt']
+    end
   end
 end
-

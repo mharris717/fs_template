@@ -37,7 +37,7 @@ module Overapp
 
     def overapp_entries
       res = config.overapps
-      local = config.overapps.find { |x| x.descriptor == "." || x.descriptor == :self }
+      local = config.overapps.find { |x| ['.',:self,path].include?(x.descriptor) }
       if local
         local.descriptor = path
         res

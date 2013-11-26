@@ -143,7 +143,7 @@ describe "write project" do
   end
 
   describe "from git" do
-    before do
+    before(:all) do
       Overapp.write_project overapp_dir, output_dir
     end
 

@@ -6,6 +6,6 @@ shared_context "output dir" do
     output_dir
   end
   after do
-    ec "rm -rf #{output_dir}", :silent => true
+    #ec "rm -rf #{output_dir}", :silent => true
   end
 end

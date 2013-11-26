@@ -9,12 +9,12 @@ module Overapp
       overapp(*args)
     end
 
-    def overapp(name)
+    def overapp(name,ops={})
       self.overapps << ConfigEntry.new(:descriptor => name, :type => :overapp)
     end
 
-    def overlay(name)
-      overapp(name)
+    def overlay(*args)
+      overapp(*args)
     end
 
     def command(cmd,ops={})

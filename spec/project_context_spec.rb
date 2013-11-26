@@ -13,7 +13,7 @@ describe "projects" do
 
   describe "multiple projects" do
     project "main" do |p|
-      p.config "c.overlay 'widget'"
+      p.config :overlay, :widget
       p.file "README","hello"
     end
 
@@ -113,9 +113,10 @@ describe "projects" do
     has_file "README","Hello baz"
   end
 
-  describe "refs self", :pending => true do
+  describe "refs self", :pending => false do
     project "base" do |p|
-      p.config "c.overlay :self; c.overlay 'auth'"
+      p.config :overlay, "."
+      p.config :overlay,:auth
       p.file "README","hello"
     end
 
@@ -126,6 +127,10 @@ describe "projects" do
     has_files 1
     has_file "README","hello auth stuff"
   end
+
+  
 end
+
+
 
 
