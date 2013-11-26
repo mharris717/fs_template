@@ -15,6 +15,7 @@ end
 
 class ProjectDSL
   dsl_method :path
+  attr_accessor :main
 
   attr_accessor :name
   include FromHash
@@ -51,6 +52,15 @@ class ProjectDSL
     res
   end
 
+  def write_to_tmp!
+    Overapp.ec "rm -rf #{project.path}", :silent => true if FileTest.exist?(project.path)
+    Overapp.ec "mkdir #{project.path}", :silent => true
+    File.create "#{project.path}/.overlay",config_body
+    files.each do |f|
+      File.create "#{project.path}/#{f.path}",f.body
+    end
+  end
+
   def file(path,body,overlay_ops={})
     if overlay_ops.size > 0
       inner = []
@@ -74,8 +84,9 @@ end
 
 shared_context "projects" do
   class << self
-    def project(name="default",&b)
-      dsl = ProjectDSL.new(:name => name)
+    def project(name="default",ops={},&b)
+      ops = {:name => name}.merge(ops)
+      dsl = ProjectDSL.new(ops)
       b[dsl]
       raise "project #{name} already exists" if project_dsls[name]
       self.project_dsls[name] = dsl
@@ -105,11 +116,21 @@ shared_context "projects" do
     end
   end
 
+  def dsls
+    self.class.project_dsls.values
+  end
+
+  def main_project
+    mains = dsls.select { |x| x.main }
+    raise "bad" if mains.size > 1
+    (mains.first || dsls.first).project
+  end
+
   def project(name=nil)
     if name
       self.class.project_dsls[name].project
     else
-      self.class.project_dsls.values.first.project
+      main_project
     end
   end
 
@@ -123,20 +144,28 @@ shared_context "projects" do
     dsl
   end
 
+  let(:mock_file_methods) { true }
+
   before do
-    Overapp.stub(:dir_files_full) do |dir|
-      find_dsl(dir).files.map do |f|
-        {:file => f.path, :body => f.body}
+    if mock_file_methods
+      Overapp.stub(:dir_files_full) do |dir|
+        find_dsl(dir).files.map do |f|
+          {:file => f.path, :body => f.body}
+        end
       end
-    end
 
-    Overapp::Project.stub("project?") do |dir|
-      find_dsl(dir).config_body.present?
-    end
+      Overapp::Project.stub("project?") do |dir|
+        find_dsl(dir).config_body.present?
+      end
 
-    Overapp::Project.stub("load") do |ops|
-      dir = ops[:path]
-      find_dsl(dir).project
+      Overapp::Project.stub("load") do |ops|
+        dir = ops[:path]
+        find_dsl(dir).project
+      end
+    else
+      self.class.project_dsls.values.each do |dsl|
+        dsl.write_to_tmp!
+      end
     end
 
     self.class.vars.each do |k,v|
