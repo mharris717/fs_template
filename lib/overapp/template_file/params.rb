@@ -2,7 +2,7 @@ module Overapp
   class TemplateFile
     class Params
       include FromHash
-      attr_accessor :full_body
+      attr_accessor :full_body, :path
       def body; full_body; end
       include Enumerable
       def each(&b)
@@ -29,6 +29,8 @@ module Overapp
           end
         end
         res
+      rescue => exp
+        raise "split_note_and_body #{path} #{exp.message}"
       end
 
       def note_params_single(one)

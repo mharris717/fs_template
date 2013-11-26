@@ -4,7 +4,7 @@ module Overapp
     attr_accessor :path, :full_body
 
     fattr(:params_obj) do
-      Params.new(:full_body => full_body)
+      Params.new(:full_body => full_body, :path => path)
     end
 
     def has_note?
