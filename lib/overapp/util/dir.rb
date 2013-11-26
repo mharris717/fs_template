@@ -3,8 +3,8 @@ module Overapp
     def dir_files(dir)
       res = Dir["#{dir}/**/*"] + Dir["#{dir}/**/.*"]
       res = res - [".","..",".git"]
-      res.reject { |x| FileTest.file?(x) && File.binary?(x) && !(x =~ /\.txt/) }
-      res.select { |x| FileTest.file?(x) }
+      res = res.select { |x| FileTest.file?(x) }
+      res.reject { |x| File.binary?(x) && !(x =~ /\.txt/) }
     end
     def dir_files_full(dir)
       raise "Dir not there #{dir}" unless FileTest.exist?(dir)
