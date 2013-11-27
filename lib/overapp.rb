@@ -1,6 +1,7 @@
 require 'mharris_ext'
 require 'ptools'
 require 'ostruct'
+require 'andand'
 
 class Object
   def klass

@@ -11,36 +11,52 @@ module Overapp
   class Files
     include FromHash
     include Enumerable
-    fattr(:files) { [] }
+    fattr(:files) { {} }
     fattr(:file_class) { TemplateFile }
     def add(ops)
-      files << file_class.new(:path => ops[:file], :full_body => ops[:body])
+      if !ops
+        raise "no ops"
+      elsif ops.kind_of?(Hash)
+        if ops[:body]
+          file = file_class.new(:path => ops[:file], :full_body => ops[:body])
+          self.files[file.path] = file
+        else
+          self.files.delete(ops[:file])
+        end
+      else
+        self.files[ops.path] = ops
+      end
     end
     def size
       files.size
     end
+
     def apply(on_top,ops={})
-      res = files.clone
+      res = self.class.new(:files => files.clone)
       on_top.each do |top_file|
-        if ops[:vars] && ops[:vars].size > 0
-          #raise ops[:vars].inspect
-          top_file.vars = ops[:vars]
-        end
-        existing = res.find { |x| x.path == top_file.path }
-        if existing
-          res -= [existing]
-          new_file = top_file.combined(existing)
-          res << new_file if new_file
-        elsif top_file.has_note?
-          raise MissingBaseFileError.new(:top_file => top_file, :base => self)
-        else
-          res << top_file.parsed
-        end
+        res.apply_file(top_file,ops)
       end
-      self.class.new(:files => res)
+      res
     end
+
+    def apply_file(top_file,ops={})
+      if ops[:vars] && ops[:vars].size > 0
+        top_file.vars = ops[:vars]
+      end
+      existing = files[top_file.path]
+      if existing
+        new_file = top_file.combined(existing)
+        add :file => top_file.path, :body => new_file.andand.body
+      elsif top_file.has_note?
+        raise MissingBaseFileError.new(:top_file => top_file, :base => self)
+      else
+        add top_file.parsed
+      end
+    end
+
+
     def each(&b)
-      files.each(&b)
+      files.values.each(&b)
     end
 
     def write_to!(dir)

@@ -35,7 +35,7 @@ describe "combine" do
   end
 
   it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
+    f = combined.find { |x| x.path == "b.txt" }
     f.body.should == 'other'
   end
 end
@@ -52,7 +52,7 @@ describe "dotfile" do
   end
 
   it 'dotfile there' do
-    f = combined.files.find { |x| x.path == ".abc" }
+    f = combined.find { |x| x.path == ".abc" }
     f.body.should == 'stuff'
   end
 end
@@ -71,7 +71,7 @@ describe "combine - append format2" do
   end
 
   it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
+    f = combined.find { |x| x.path == "b.txt" }
     f.body.should == "here\nother"
   end
 end
@@ -88,7 +88,7 @@ describe "combine - insert after" do
   end
 
   it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
+    f = combined.find { |x| x.path == "b.txt" }
     f.body.should == "123\n456\nabc\n789"
   end
 end
@@ -105,7 +105,7 @@ describe "combine - insert after with colon" do
   end
 
   it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
+    f = combined.find { |x| x.path == "b.txt" }
     f.body.should == "123\n45: 6\nabc\n789"
   end
 end
@@ -122,7 +122,7 @@ describe "combine - insert before" do
   end
 
   it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
+    f = combined.find { |x| x.path == "b.txt" }
     f.body.should == "123\nabc\n456\n789"
   end
 end
@@ -151,7 +151,7 @@ describe "combine - multiple directives" do
   end
 
   it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
+    f = combined.find { |x| x.path == "b.txt" }
     f.body.should == "abc\ndef\n789"
   end
 end
@@ -168,7 +168,7 @@ describe "combine - replace" do
   end
 
   it 'combined file should overwrite' do
-    f = combined.files.find { |x| x.path == "b.txt" }
+    f = combined.find { |x| x.path == "b.txt" }
     f.body.should == "123\nabc\n789"
   end
 end
