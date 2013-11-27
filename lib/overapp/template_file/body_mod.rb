@@ -32,25 +32,26 @@ module Overapp
           instance.transform(*args)
         end
         fattr(:instance) { List.new }
+      
+        def register_types!
+          register lambda { |params| params[:action] == 'append' }, 
+                   lambda { |base_body,body,params| base_body + body }
+
+          register lambda { |params| params[:action] == 'insert' && params[:after] }, 
+                   lambda { |base_body,body,params| base_body.gsub(params[:after],"#{params[:after]}#{body}") }  
+
+          register lambda { |params| params[:action] == 'insert' && params[:before] }, 
+                   lambda { |base_body,body,params| base_body.gsub(params[:before],"#{body}#{params[:before]}") }  
+
+          register lambda { |params| params[:action] == 'replace' && params[:base] }, 
+                   lambda { |base_body,body,params| base_body.gsub(params[:base],body) }  
+
+          register lambda { |params| params[:action] == 'delete' }, 
+                   lambda { |base_body,body,params| :delete }  
+        end
       end
 
-
-      register lambda { |params| params[:action] == 'append' }, 
-               lambda { |base_body,body,params| base_body + body }
-
-      register lambda { |params| params[:action] == 'insert' && params[:after] }, 
-               lambda { |base_body,body,params| base_body.gsub(params[:after],"#{params[:after]}#{body}") }  
-
-      register lambda { |params| params[:action] == 'insert' && params[:before] }, 
-               lambda { |base_body,body,params| base_body.gsub(params[:before],"#{body}#{params[:before]}") }  
-
-      register lambda { |params| params[:action] == 'replace' && params[:base] }, 
-               lambda { |base_body,body,params| base_body.gsub(params[:base],body) }  
-
-      register lambda { |params| params[:action] == 'delete' }, 
-               lambda { |base_body,body,params| :delete }  
-
-     
+      register_types!
     end
   end
 end
