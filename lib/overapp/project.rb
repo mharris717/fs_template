@@ -37,13 +37,16 @@ module Overapp
 
     def overapp_entries
       res = config.overapps
+
       local = config.overapps.find { |x| ['.',:self,path].include?(x.descriptor) }
-      if local
+      res = if local
         local.descriptor = path
         res
       else
         res + [ConfigEntry.new(:descriptor => path)]
       end
+
+      res.reject { |x| x.ignore? }
     end
 
     fattr(:load_factory_class) { Load::Factory }

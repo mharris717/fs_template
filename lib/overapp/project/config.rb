@@ -10,7 +10,7 @@ module Overapp
     end
 
     def overapp(name,ops={})
-      self.overapps << ConfigEntry.new(:descriptor => name, :type => :overapp)
+      self.overapps << ConfigEntry.new(:descriptor => name, :type => :overapp, :entry_ops => ops)
     end
 
     def overlay(*args)

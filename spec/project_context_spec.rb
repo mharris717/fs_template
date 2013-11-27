@@ -115,7 +115,7 @@ describe "projects" do
     has_file "README","Hello baz"
   end
 
-  describe "refs self", :pending => false do
+  describe "refs self" do
     project "base" do |p|
       p.config :overlay, "."
       p.config :overlay,:auth
@@ -128,6 +128,21 @@ describe "projects" do
 
     has_files 1
     has_file "README","hello auth stuff"
+  end
+
+  describe "ignore self" do
+    project "base" do |p|
+      p.config :overlay,:auth
+      p.config :overlay, ".", :ignore => true
+      p.file "README","hello"
+    end
+
+    project "auth" do |p|
+      p.file "auth.js"," auth stuff"
+    end
+
+    has_files 1
+    has_file "auth.js"
   end
 
   
