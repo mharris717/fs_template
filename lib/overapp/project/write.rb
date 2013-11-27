@@ -14,7 +14,9 @@ module Overapp
 
       def write!
         raise "no combined files" unless combined_files
-        combined_files.write_to!(output_path)
+        Overapp::Git.commit(output_path,"Overlay Created") do
+          combined_files.write_to!(output_path)
+        end
       end
     end
   end

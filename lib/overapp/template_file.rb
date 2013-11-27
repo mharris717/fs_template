@@ -41,8 +41,8 @@ module Overapp
       full_body
     end 
 
-    def combined(base)
-      b = apply_body_to(base.full_body)
+    def combined(base=nil)
+      b = apply_body_to(base ? base.full_body : "")
       if b == :delete
         nil
       else
@@ -53,14 +53,11 @@ module Overapp
     def write_to!(dir)
       raise "bad path" if path.blank?
       d = File.dirname("#{dir}/#{path}")
-      `mkdir -p #{d}`
-      File.create "#{dir}/#{path}",body
+      Overapp.ec "mkdir -p #{d}", :silent => true
+      Overapp.file_create "#{dir}/#{path}",body
     end
 
     fattr(:vars) { {} }
-    def parsed
-      combined(OpenStruct.new(:full_body => ""))
-    end
   end
 
   class BasicFile < TemplateFile

@@ -14,19 +14,13 @@ module Overapp
     fattr(:files) { {} }
     fattr(:file_class) { TemplateFile }
     def add(ops)
-      if !ops
-        raise "no ops"
-      elsif ops.kind_of?(Hash)
-        if ops[:body]
-          file = file_class.new(:path => ops[:file], :full_body => ops[:body])
-          self.files[file.path] = file
-        else
-          self.files.delete(ops[:file])
-        end
-      else
-        self.files[ops.path] = ops
-      end
+      ops = file_class.new(:path => ops[:file], :full_body => ops[:body]) if ops.kind_of?(Hash)
+      self.files[ops.path] = ops
     end
+    def delete(path)
+      self.files.delete(path)
+    end
+
     def size
       files.size
     end
@@ -44,13 +38,12 @@ module Overapp
         top_file.vars = ops[:vars]
       end
       existing = files[top_file.path]
-      if existing
-        new_file = top_file.combined(existing)
-        add :file => top_file.path, :body => new_file.andand.body
-      elsif top_file.has_note?
-        raise MissingBaseFileError.new(:top_file => top_file, :base => self)
+      raise MissingBaseFileError.new(:top_file => top_file, :base => self) if !existing && top_file.has_note?
+      new_file = top_file.combined(existing)
+      if new_file
+        add new_file
       else
-        add top_file.parsed
+        delete top_file.path
       end
     end
 

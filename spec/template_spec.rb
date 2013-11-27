@@ -37,7 +37,7 @@ describe 'Template' do
     end
 
     it 'works' do
-      template_file.parsed.full_body.should == "\n4"
+      template_file.combined(nil).full_body.should == "\n4"
     end
   end
 

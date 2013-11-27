@@ -27,7 +27,7 @@ module Overapp
       load File.dirname(__FILE__) + "/overapp/project/#{f}.rb"
     end
 
-    %w(tmp_dir git dir cmd write).each do |f|
+    %w(tmp_dir git dir cmd write file).each do |f|
       load File.dirname(__FILE__) + "/overapp/util/#{f}.rb"
     end
 
