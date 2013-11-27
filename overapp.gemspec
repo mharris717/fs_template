@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "overapp"
-  s.version = "0.5.0"
+  s.version = "0.5.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
-  s.date = "2013-11-26"
+  s.date = "2013-11-27"
   s.description = "overapp"
   s.email = "mharris717@gmail.com"
   s.executables = ["overapp"]
@@ -50,6 +50,7 @@ Gem::Specification.new do |s|
     "lib/overapp/template_file/var_obj.rb",
     "lib/overapp/util/cmd.rb",
     "lib/overapp/util/dir.rb",
+    "lib/overapp/util/file.rb",
     "lib/overapp/util/git.rb",
     "lib/overapp/util/tmp_dir.rb",
     "lib/overapp/util/write.rb",
