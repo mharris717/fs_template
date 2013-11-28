@@ -19,7 +19,7 @@ module Overapp
           single = list.find { |x| x.match?(params) }
           raise "bad #{params.inspect}" unless single
           res = single.transform[base_body,body,params]
-          raise "no change" if res == base_body
+          raise "no change\nRES: #{res}\nBODY: #{body}\nPARAMS: #{params.inspect}" if res == base_body
           res
         end
       end

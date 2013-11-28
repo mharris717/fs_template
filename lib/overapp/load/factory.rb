@@ -4,10 +4,15 @@ module Overapp
       include FromHash
       attr_accessor :descriptor, :type, :entry_ops
 
+      def command
+        Command.new(:descriptor => descriptor).tap do |x| 
+          x.relative_output_path = entry_ops[:path] if entry_ops[:path].present? 
+        end
+      end
+
       def loader
-        raise "bad #{descriptor}" if descriptor.blank?
         if type.to_s.to_sym == :command
-          Command.new(:descriptor => descriptor).tap { |x| x.relative_output_path = entry_ops[:path] if entry_ops[:path].present? }
+          command
         elsif Git.repo?(descriptor)
           Repo.new(:descriptor => descriptor)
         else

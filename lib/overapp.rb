@@ -16,7 +16,7 @@ module Overapp
     h[:load] = %w(base instance factory)
     h["load/types"] = %w(command raw_dir local_dir repo empty project)
     h[:project] = %w(config write config_entry)
-    h[:util] = %w(tmp_dir git dir cmd write file)
+    h[:util] = %w(tmp_dir git dir cmd write file str)
     h[:template_file] = %w(params body_mod var_obj)
 
     res = []
