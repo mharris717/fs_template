@@ -12,9 +12,9 @@ end
 module Overapp
   def self.files
     h = {}
-    h[nil] = %w(files template_file project from_command var)
+    h[nil] = %w(files template_file project var)
     h[:load] = %w(base instance factory)
-    h["load/types"] = %w(command raw_dir local_dir repo empty project)
+    h["load/types"] = %w(command raw_dir local_dir repo project)
     h[:project] = %w(config write config_entry)
     h[:util] = %w(tmp_dir git dir cmd write file str)
     h[:template_file] = %w(params body_mod var_obj)
