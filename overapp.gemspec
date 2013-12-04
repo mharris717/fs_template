@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Harris"]
-  s.date = "2013-11-27"
+  s.date = "2013-12-04"
   s.description = "overapp"
   s.email = "mharris717@gmail.com"
   s.executables = ["overapp"]
@@ -30,12 +30,10 @@ Gem::Specification.new do |s|
     "bin/overapp",
     "lib/overapp.rb",
     "lib/overapp/files.rb",
-    "lib/overapp/from_command.rb",
     "lib/overapp/load/base.rb",
     "lib/overapp/load/factory.rb",
     "lib/overapp/load/instance.rb",
     "lib/overapp/load/types/command.rb",
-    "lib/overapp/load/types/empty.rb",
     "lib/overapp/load/types/local_dir.rb",
     "lib/overapp/load/types/project.rb",
     "lib/overapp/load/types/raw_dir.rb",
@@ -52,10 +50,13 @@ Gem::Specification.new do |s|
     "lib/overapp/util/dir.rb",
     "lib/overapp/util/file.rb",
     "lib/overapp/util/git.rb",
+    "lib/overapp/util/str.rb",
     "lib/overapp/util/tmp_dir.rb",
     "lib/overapp/util/write.rb",
     "lib/overapp/var.rb",
     "overapp.gemspec",
+    "spec/bare_project_spec.rb",
+    "spec/bin_spec.rb",
     "spec/binary_copy_spec.rb",
     "spec/command_replacement_spec.rb",
     "spec/from_command_spec.rb",
