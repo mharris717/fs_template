@@ -14,8 +14,12 @@ module Overapp
         !!project_files.map { |x| "#{path}/#{x}" }.find { |x| FileTest.exist?(x) }
       end
 
-      def load(*args)
-        new(*args)
+      def load(ops={})
+        if ops[:path] && FileTest.file?(ops[:path])
+          BareProject.new(ops)
+        else
+          new(ops)
+        end
       end
     end
 
@@ -43,10 +47,14 @@ module Overapp
         local.descriptor = path
         res
       else
-        res + [ConfigEntry.new(:descriptor => path)]
+        res + (use_local? ? [ConfigEntry.new(:descriptor => path)] : [])
       end
 
       res.reject { |x| x.ignore? }
+    end
+
+    def use_local?
+      true
     end
 
     fattr(:load_factory_class) { Load::Factory }
@@ -68,6 +76,15 @@ module Overapp
 
     def combined_files
       Write.new(:project => self).combined_files
+    end
+  end
+
+  class BareProject < Project
+    fattr(:config_body) do
+      File.read(path)
+    end
+    def use_local?
+      false
     end
   end
 end
