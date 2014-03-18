@@ -37,6 +37,9 @@ module Overapp
           register lambda { |params| params[:action] == 'append' }, 
                    lambda { |base_body,body,params| base_body + body }
 
+          register lambda { |params| params[:action] == 'create' }, 
+                   lambda { |base_body,body,params| body }
+
           register lambda { |params| params[:action] == 'insert' && params[:after] }, 
                    lambda { |base_body,body,params| base_body.gsub(params[:after],"#{params[:after]}#{body}") }  
 

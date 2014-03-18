@@ -3,6 +3,11 @@ module Overapp
     include FromHash
     attr_accessor :path
     fattr(:vars) { config.vars }
+    def add_vars(vs)
+      vs.each do |k,v|
+        unloaded_config[k] = v
+      end
+    end
 
     class << self
       def project_files
@@ -32,11 +37,21 @@ module Overapp
       end
     end
 
-    fattr(:config) do
+    fattr(:unloaded_config) do
       res = ProjectConfig.new
       res.body = config_body
-      res.load!
       res
+    end
+
+    fattr(:config) do
+      unloaded_config.load!
+      unloaded_config
+    end
+
+    def reload_config!
+      config_body!
+      unloaded_config!
+      config!
     end
 
     def overapp_entries

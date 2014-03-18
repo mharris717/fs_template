@@ -70,4 +70,39 @@ describe 'Template' do
       combined.full_body.should == "abc\n<%= 2+2 %>"
     end
   end
+
+  describe "diff target file" do
+    let(:full_body) do
+      "<overapp>
+      target: fun.txt
+      </overapp>
+#{body}"
+    end
+    let(:body) do
+      "Hello"
+    end
+
+    it 'parsed_path' do
+      combined.path.should == "fun.txt"
+    end
+  end
+
+    describe "diff templated target file" do
+      let(:full_body) do
+        "<overapp>
+        target: <%= target_filename %>
+        </overapp>
+  #{body}"
+      end
+      let(:body) do
+        "Hello"
+      end
+
+      it 'parsed_path' do
+        file = "#{rand(100000000)}.txt"
+        template_file.vars[:target_filename] = file
+        template_file.parsed_path.should == file
+        combined.path.should == file
+      end
+    end
 end

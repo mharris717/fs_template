@@ -21,8 +21,14 @@ module Overapp
       self.overapps << ConfigEntry.new(:descriptor => cmd, :type => :command, :entry_ops => ops)
     end
 
-    def var(k,v)
-      vars[k] = v
+    def var(k,*args)
+      if args.empty?
+        vars[k]
+      elsif args.size == 1
+        vars[k] = args.first
+      else
+        raise "bad #{args.inspect}"
+      end
     end
 
     def load!

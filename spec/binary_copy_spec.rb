@@ -31,8 +31,7 @@ describe 'binary' do
       body = body.gsub("widget",project("widget").path)
       File.create path, body
       project("main").tap do |p|
-        p.config_body!
-        p.config!
+        p.reload_config!
       end
     end
 

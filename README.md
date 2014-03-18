@@ -17,3 +17,9 @@ Description goes here.
 Copyright (c) 2013 Mike Harris. See LICENSE.txt for
 further details.
 
+Overapp is something.
+
+Overapp is a library for creating app overlays.
+
+An app overlay is a piece of an app that goes on top of an existing app.
+

@@ -3,8 +3,13 @@ module Overapp
     include FromHash
     attr_accessor :path, :full_body
 
+    def parsed_path
+      res = params_obj.target_path
+      res || path
+    end
+
     fattr(:params_obj) do
-      Params.new(:full_body => full_body, :path => path)
+      Params.new(:full_body => full_body, :path => path, :var_obj => VarObj.new(:file => self))
     end
 
     def has_note?
@@ -46,7 +51,7 @@ module Overapp
       if b == :delete
         nil
       else
-        self.class.new(:path => path, :full_body => b)
+        self.class.new(:path => parsed_path, :full_body => b)
       end
     end
 

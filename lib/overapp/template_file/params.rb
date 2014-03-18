@@ -2,7 +2,7 @@ module Overapp
   class TemplateFile
     class Params
       include FromHash
-      attr_accessor :full_body, :path
+      attr_accessor :full_body, :path, :var_obj
       def body; full_body; end
       include Enumerable
       def each(&b)
@@ -44,9 +44,12 @@ module Overapp
       end
 
       def note_params_single(one)
+        #puts "single start " + one.inspect
+
         res = {:body => one[:body]}
 
         if one[:note]
+          one[:note] = var_obj.render(one[:note])
           lines = one[:note].split("\n").select { |x| x.present? }
           if lines.size == 1 && !(lines.first =~ /[a-z]+:/)
             res[:action] = lines.first.strip
@@ -54,6 +57,8 @@ module Overapp
             res = res.merge(note_params_single_hash(lines))
           end
         end
+
+        #puts "single end #{res.inspect}"
 
         res
       end
@@ -75,6 +80,15 @@ module Overapp
 
       def has_note?
         note_params.any? { |x| x[:action].present? }
+      end
+
+      def target_path
+        res = note_params.find { |x| x[:target] || x['target'] }
+        if res
+          res[:target] || res['target']
+        else
+          nil
+        end
       end
     end
   end

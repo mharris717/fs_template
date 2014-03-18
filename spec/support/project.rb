@@ -48,7 +48,7 @@ class ProjectDSL
     res.config_body = config_body
     res.path = path || "/tmp/#{rand(100000000000000000)}"
 
-    res.vars = res.vars.merge(vars)
+    res.add_vars vars
     res
   end
 

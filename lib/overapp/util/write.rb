@@ -1,8 +1,10 @@
 module Overapp
   class << self
-    def write_project(overapp_path,output_path)
+    def write_project(overapp_path,output_path,vars={})
       Overapp.with_local_path(overapp_path) do |dir|
-        Overapp::Project.new(:path => dir).write_to!(output_path)
+        project = Overapp::Project.new(:path => dir)
+        vars.each { |k,v| project.unloaded_config.vars[k] = v }
+        project.write_to!(output_path)
       end
     end
   end
